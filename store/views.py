@@ -55,7 +55,6 @@ def user_register(request):
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
             group_name = form.cleaned_data['role']
-            print(group_name)
             group = Group.objects.get(name=group_name)
 
             user = User.objects.create_user(username,email,password)
@@ -73,3 +72,7 @@ def developer_main(request):
 
 def player_main(request):
     return HttpResponse('This is test player main' + str(request.user))
+
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect('login.html')
