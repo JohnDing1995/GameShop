@@ -17,14 +17,19 @@ def user_login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            group = form.cleaned_data['role']
-            user = authenticate(username=username, password=password, group=group)
+            user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('main'))
+                if user.groups.filter(name='dev').exists():
+                    return HttpResponseRedirect('../developer/')
+                elif user.groups.filter(name='player'):
+                    return HttpResponseRedirect('../player/')
+            else:
+                return render(request, 'login.html', {'form': form,'msg':'Username or password is not correct!','can_not_login': True})
+        else:
+            return render(request, 'login.html', {'form': form, 'msg': 'Username or password is not correct!','can_not_login': True})
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
-
 
 def player_list_games(request):
     return HttpResponse('This is game list of test player')
