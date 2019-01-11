@@ -1,7 +1,7 @@
 from django import forms
 
 ROLE_CHOICES = (
-    ('play', 'Player'),
+    ('player', 'Player'),
     ('dev', 'Developer')
 )
 

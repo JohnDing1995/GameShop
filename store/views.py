@@ -50,15 +50,26 @@ def developer_set_game(request, game_id):
 def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
-        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['password_confirmed']:
+        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['password_confirm']:
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            group = form.cleaned_data['role']
-            group.user_set.add(username)
-            user = User.objects.create_user(username,password)
-            return HttpResponseRedirect('./login')
+            email = form.cleaned_data['email']
+            group_name = form.cleaned_data['role']
+            print(group_name)
+            group = Group.objects.get(name=group_name)
+
+            user = User.objects.create_user(username,email,password)
+            group.user_set.add(user)
+            return HttpResponseRedirect('../login')
         else:
-            return render(request, '/register.html'), {'form':form, 'error': 'Please check your username and password if they meet requirements.'})
-    else:
-        form  = RegisterForm()
-    return render(request,'/register.html', {'form':form,'error':''})
+            return render(request, 'register.html', {'form':form, 'error': 'Please check your username and password if they meet requirements.'})
+    form = RegisterForm()
+    return render(request,'register.html', {'form':form,'error':''})
+
+
+def developer_main(request):
+    return HttpResponse('This is test developer main' + str(request.user))
+
+
+def player_main(request):
+    return HttpResponse('This is test player main' + str(request.user))
