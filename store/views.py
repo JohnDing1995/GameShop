@@ -48,13 +48,17 @@ def developer_set_game(request, game_id):
 
 
 def user_register(request):
-    form = RegisterForm()
-    return render(request, 'register.html', {'form':form,'error':''})
-
-
-def developer_main(request):
-    return HttpResponse('This is main page of developer')
-
-
-def player_main(request):
-    return HttpResponse('This is main page of player')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['password_confirmed']:
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            group = form.cleaned_data['role']
+            group.user_set.add(username)
+            user = User.objects.create_user(username,password)
+            return HttpResponseRedirect('./login')
+        else:
+            return render(request, '/register.html'), {'form':form, 'error': 'Please check your username and password if they meet requirements.'})
+    else:
+        form  = RegisterForm()
+    return render(request,'/register.html', {'form':form,'error':''})
