@@ -83,15 +83,15 @@
         </form>
   <div class="form-signin">
   </div>
-            {% if can_not_login %}
+      {% if can_not_login %}
         <div class="alert alert-danger alert-dismissible alert-box" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;
                 </span>
-            </button>
-            <strong>Sorry!</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wrong user or password
-        </div>
-        {% endif %}
+            </button>{{ msg }}
+
+     {% endif %}
+</div>
 </div>
     </body>
          <div id="footer" class = "footer navbar-fixed-bottom" style=" width: 100%; margin-top: 30px;height: 80px">

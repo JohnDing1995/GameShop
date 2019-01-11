@@ -19,7 +19,7 @@ from store import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('player/', include('store.player_urls')),
+    path('player/', include('store.player_urls'), name= 'player_main'),
     path('developer/', include('store.developer_urls'), name = 'dev_main'),
     path('login/', views.user_login, name = 'login'),
     path('register/', views.user_register, name = 'register')

@@ -21,7 +21,18 @@ def user_login(request):
             user = authenticate(username=username, password=password, group=group)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('main'))
+                if group is 'dev':
+                    return HttpResponseRedirect(reverse('dev_main'))
+                else:
+                    return HttpResponseRedirect(reverse('player_main'))
+            else:
+                return render(request, 'login.html', {'form': form,'msg':'Username or password is not correct!','can_not_login': True})
+        else:
+            return render(request, 'login.html', {'form': form, 'msg': 'Username or password is not correct!','can_not_login': True})
+
+
+
+
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
