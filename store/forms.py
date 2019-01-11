@@ -24,4 +24,5 @@ class LoginForm(forms.Form):
     role = forms.ChoiceField(
         label="I'm a",
         choices=ROLE_CHOICES
+
     )

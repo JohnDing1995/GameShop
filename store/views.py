@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 
 # Create your views here.
@@ -43,5 +43,17 @@ def developer_set_game(request, game_id):
 
 
 def user_register(request):
-    form = RegisterForm()
-    return render(request, 'register.html', {'form':form,'error':''})
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['password_confirmed']:
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            group = form.cleaned_data['role']
+            group.user_set.add(username)
+            user = User.objects.create_user(username,password)
+            return HttpResponseRedirect('./login')
+        else:
+            return render(request, '/register.html'), {'form':form, 'error': 'Please check your username and password if they meet requirements.'})
+    else:
+        form  = RegisterForm()
+    return render(request,'/register.html', {'form':form,'error':''})
