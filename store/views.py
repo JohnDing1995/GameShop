@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.urls import reverse
 
 from store import models
-from store.forms import LoginForm
+from store.forms import LoginForm, RegisterForm
 
 
 def user_login(request):
@@ -25,9 +25,6 @@ def user_login(request):
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
-def register(request):
-    return HttpResponse('This is register page')
-
 
 def player_list_games(request):
     return HttpResponse('This is game list of test player')
@@ -43,3 +40,8 @@ def developer_list_games(request):
 
 def developer_set_game(request, game_id):
     return HttpResponse('This is test developer, setting game' + str(game_id))
+
+
+def user_register(request):
+    form = RegisterForm()
+    return render(request, 'register.html', {'form':form,'error':''})

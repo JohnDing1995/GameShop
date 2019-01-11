@@ -2,18 +2,16 @@
 {% load staticfiles %}
 {% block style %}
 <style>
-    body{
-        background-attachment:fixed;
-        background-size: cover;
-    }
-    .container {
-        text-align: center;
-        margin-top: 0px;
+    body {
+      padding-top: 40px;
+      padding-bottom: 40px;
     }
     .form-signin {
       max-width: 330px;
       padding: 15px;
       margin: 0 auto;
+        margin-top: 100px;
+
     }
     .form-signin .form-signin-heading,
     .form-signin .checkbox {
@@ -45,9 +43,16 @@
     }
 </style>
 {% endblock %}
+{% block script %}
 
+     <script>
+         function refresh_check_code(ths) {
+                 ths.src += '?';
+         }
+     </script>
+{% endblock %}
 {% block content %}
-    <body>
+        <body>
      <nav class="navbar-default navbar-fixed-top col-sm-12" style="background-color: #9D0711">
       <div class="container">
         <div class="navbar-header" >
@@ -55,7 +60,6 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button>
             <span class="navbar-brand" style="color: whitesmoke" >Game Store</span>
         </div>
         <div id="navbar" class="collapse navbar-collapse" style="color: #2e6da4">
@@ -68,37 +72,31 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-<div class="container" style="margin-bottom: 150px">
-    <h2 class="form-signin-heading" style="font-family:'Arial Hebrew';color:  black">Please Login</h2>
+<div class="container md-col-4 md-col-offset-4">
     <form class="form-signin" method="post">
-        <!--<label for="inputEmail" class="sr-only">Email address</label>-->
-        <!--<input type="text" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>-->
-        <!--<label for="inputPassword" class="sr-only">Password</label>-->
-        <!--<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>-->
         {% csrf_token %}
-    {{ form.as_p }}
-        <div class="checkbox">
-        </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        </form>
-  <div class="form-signin">
-  </div>
-            {% if can_not_login %}
+        {{ form }}
+{#        <h2 class="form-signin-heading">Please sign up</h2>#}
+{#        <label for="username" class="sr-only">User Name</label>#}
+{#        <input type="text" id="username" class="form-control" placeholder="User Name" required autofocus>#}
+{#        <label for="password" class="sr-only">Password</label>#}
+{#        <input type="password" id="password" class="form-control" placeholder="Password" required>#}
+{#                <label for="repeatPassword" class="sr-only">Repeat Your Password</label>#}
+{#        <input type="password" id="repeatPassword" class="form-control" placeholder="Repeat your Password" required>#}
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+    </form>
+ {% if error !=  "" %}
         <div class="alert alert-danger alert-dismissible alert-box" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;
+                <span aria-hidden="true">
                 </span>
             </button>
-            <strong>Sorry!</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wrong user or password
-        </div>
-        {% endif %}
+            {{ error }}
+
 </div>
-    </body>
-         <div id="footer" class = "footer navbar-fixed-bottom" style=" width: 100%; margin-top: 30px;height: 80px">
-         <div class="footer-div" style="font-size: 12px;">
-             <br>
-             All rights reserved
-             <br>
-         </div>
-     </div>
-{% endblock %}}
+{% endif %}
+</div>
+        </body>
+
+{% endblock %}
