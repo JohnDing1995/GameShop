@@ -21,7 +21,3 @@ class LoginForm(forms.Form):
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label="Password", max_length=256,
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    role = forms.ChoiceField(
-        label="I'm a",
-        choices=ROLE_CHOICES
-    )

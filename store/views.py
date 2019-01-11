@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 
 # Create your views here.
@@ -17,25 +17,19 @@ def user_login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            group = form.cleaned_data['role']
-            user = authenticate(username=username, password=password, group=group)
+            user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                if group is 'dev':
-                    return HttpResponseRedirect(reverse('dev_main'))
-                else:
-                    return HttpResponseRedirect(reverse('player_main'))
+                if user.groups.filter(name='dev').exists():
+                    return HttpResponseRedirect('../developer/')
+                elif user.groups.filter(name='player'):
+                    return HttpResponseRedirect('../player/')
             else:
                 return render(request, 'login.html', {'form': form,'msg':'Username or password is not correct!','can_not_login': True})
         else:
             return render(request, 'login.html', {'form': form, 'msg': 'Username or password is not correct!','can_not_login': True})
-
-
-
-
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
-
 
 def player_list_games(request):
     return HttpResponse('This is game list of test player')
@@ -56,3 +50,11 @@ def developer_set_game(request, game_id):
 def user_register(request):
     form = RegisterForm()
     return render(request, 'register.html', {'form':form,'error':''})
+
+
+def developer_main(request):
+    return HttpResponse('This is main page of developer')
+
+
+def player_main(request):
+    return HttpResponse('This is main page of player')
