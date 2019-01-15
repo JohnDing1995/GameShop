@@ -10,7 +10,7 @@
 
     <script src="{% static 'js/bootstrap.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-<style>
+    <style>
         .footer{
             height: 70px;
             background-color: rgba(29,3,3,0.99);
@@ -18,33 +18,24 @@
             color: white;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
-            .zoomImage{
-            width:100%;
-            height:0;
-            padding-bottom: 110%;
-            overflow:hidden;
-            background-position: center center;
-            background-repeat: no-repeat;
-            -webkit-background-size:cover;
-            -moz-background-size:cover;
-            background-size:cover;
+
+        .navbar {
+            background-color: #000000;
+            font-family: LucidaGrande;
         }
-            .status{
-                color: darkred;
-                font-size: large;
-            }
+        .navbar-brand {
+            color: #FFFFFF;
+        }
         {% block style %}
-    {% endblock %}
-</style>
-
-
+        {% endblock %}
+    </style>
 </head>
-
 {% block script %}
 {% endblock %}
-
+<body>
+   <nav class="navbar">
+      <span class="navbar-brand">Game Store</span>
+  </nav>
 {% block content %}
-    <body>
-
-    </body>
 {% endblock %}
+</body>
