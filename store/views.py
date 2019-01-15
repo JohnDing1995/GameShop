@@ -68,7 +68,8 @@ def user_register(request):
 
 
 def developer_main(request):
-    return HttpResponse('This is test developer main' + str(request.user))
+    #return HttpResponse('This is test developer main' + str(request.user))
+    return render(request,'developer_main.html', {'games':'List of games'})
 
 
 def player_main(request):
