@@ -33,6 +33,9 @@ def user_login(request):
 def player_play_game(request, game_id):
     return HttpResponse('This is test player, playing game' + str(game_id))
 
+def player_list_games(request):
+    return HttpResponse('This is game list of test player')
+
 
 def developer_list_games(request):
     return HttpResponse('This is game list of test developer')
