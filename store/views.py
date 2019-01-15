@@ -74,5 +74,11 @@ def developer_main(request):
 def player_main(request):
     user = request.user
     purchase_history = Purchase.objects.filter(user=user)
+    return HttpResponse('This is test player main' + str(user))
 
-    return HttpResponse('This is test player main' + str(request.user))
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect('login.html')
+
+
+
