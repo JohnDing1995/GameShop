@@ -70,7 +70,8 @@ def user_register(request):
 @login_required()
 def developer_main(request):
     user = request.user
-    if not user.groups.filter(name='dev').exists():
+    if len(user.groups.filter(name='player')) > 0:
+
         return HttpResponseRedirect('player_main')
     games_sold = Game.objects.filter(developer=user)
 
@@ -80,7 +81,8 @@ def developer_main(request):
 @login_required()
 def player_main(request):
     user = request.user
-    if not user.groups.filter(name='player').exists():
+    if len(user.groups.filter(name='dev')) > 0:
+        print("Not player")
         return HttpResponseRedirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
     return HttpResponse('This is test player main' + str(user))
@@ -110,3 +112,4 @@ def developer_create_game(request):
             return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
+
