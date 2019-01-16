@@ -1,3 +1,4 @@
+from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -6,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 
-from store.forms import LoginForm, RegisterForm
+from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase
 
 
@@ -69,6 +70,8 @@ def user_register(request):
 @login_required()
 def developer_main(request):
     user = request.user
+    if not user.groups.filter(name='dev').exists():
+        return HttpResponseRedirect('player_main')
     games_sold = Game.objects.filter(developer=user)
 
     #return HttpResponse('This is test developer main' + str(request.user))
@@ -77,9 +80,33 @@ def developer_main(request):
 @login_required()
 def player_main(request):
     user = request.user
+    if not user.groups.filter(name='player').exists():
+        return HttpResponseRedirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
     return HttpResponse('This is test player main' + str(user))
 
+@login_required()
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('login.html')
+
+@login_required()
+def developer_create_game(request):
+    user = request.user
+    if request.method == 'POST':
+        form = CreateGameForm(request.POST)
+        if form.is_valid():
+            game_name = form.cleaned_data['game_name']
+            price = form.cleaned_data['game_price']
+            url = form.cleaned_data['game_url']
+            if len(Game.objects.filter(game_name=game_name)) > 0:
+                print('Game already exists')
+                return render(request, "create_game.html", {'form': form, 'msg':'Game already exists'})
+            else:
+                g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url)
+                g.save()
+                return render(request, "create_game.html", {'form': form, 'msg': 'Game created'})
+        else:
+            return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
+    form = CreateGameForm()
+    return render(request, "create_game.html", {'form': form})
