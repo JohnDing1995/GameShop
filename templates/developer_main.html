@@ -1,6 +1,67 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block style %}
+
+  .my_games {
+    background-color:#E94209;
+    color:white;
+    font-size:20px;
+    width:20%;
+    padding:1.5%;
+    margin:5%;
+    text-align:center;
+  }
+
+  .game_row {
+    margin:5%;
+  }
+
+  .game_cell {
+    vertical-align:top;
+    display:inline-block;
+    width:20%;
+  }
+
+  .game_name {
+    padding:4%;
+    color:white;
+    background-color:#E94209;
+    font-size:18px;
+    font-family:LucidaGrande;
+  }
+
+  .game_price {
+    padding:4%;
+    color:white;
+    background-color:black;
+    font-size:18px;
+    font-family:LucidaGrande;
+  }
+
+  .game_copies_sold {
+    position:relative;
+    left:3%;
+    padding:1%;
+    color:white;
+    background-color:#4E4E4E;
+    text-align:center;
+    font-size:18px;
+    font-family:LucidaGrande;
+  }
+
+{% endblock %}
 {% block content %}
-      <p>Game list: {{ games }}</p>
-      <a href="/developer/create_game">Create game</a>
+      <div class="my_games">My games</div>
+      {% for game in games %}
+      <div class="game_row">
+        <div class="game_cell">
+          <div class="game_name">{{ game.game_name }}</div>
+          <div class="game_price">${{ game.price }}</div>
+        </div>
+        <div class="game_cell game_copies_sold">
+          <p>Copies sold</p>{{ game.copies_sold }}
+        </div>
+      </div>
+      {% endfor %}
+      <a href="/developer/create_game" style="margin:5%;">Create game</a>
 {% endblock %}
