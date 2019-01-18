@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
+<div class="page_header"><a href="/developer">Dashboard</a> > {{ action }}</div>
     <form method="post">
-        <!--<label for="inputEmail" class="sr-only">Email address</label>-->
-        <!--<input type="text" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>-->
-        <!--<label for="inputPassword" class="sr-only">Password</label>-->
-        <!--<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>-->
         {% csrf_token %}
     {{ form.as_p }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Create Game</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">{{ action }}</button>
         </form>
     <div class="alert">
     {{ msg }}

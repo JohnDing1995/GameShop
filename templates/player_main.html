@@ -1,14 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block style %}
-  .purchased_games {
-    background-color:#E94209;
-    color:white;
-    font-size:20px;
-    padding:20px;
-  }
 {% endblock %}
 {% block content %}
-  <div class="purchased_games">Purchased games</div>
-  <div style="margin:20px;">Go to the <a href="/games">store</a> or play your purchased games below<div>
+  <div class="page_header">Dashboard</div>
+  <div style="margin:20px;">Go to the <a href="/player/store">store</a> or play your purchased games below<div>
 {% endblock %}
