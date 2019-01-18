@@ -113,6 +113,7 @@ def developer_create_game(request):
     return render(request, "create_game.html", {'form': form})
 
 @login_required(login_url='login')
-def developer_modify_game(request):
-    pass
+def developer_game_buyer(request, game_id):
+    #list all purchase history of a game
+   pass
 
