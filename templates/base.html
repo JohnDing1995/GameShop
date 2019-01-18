@@ -26,6 +26,10 @@
         .navbar-brand {
             color: #FFFFFF;
         }
+
+        .logout {
+            text-align:right;
+        }
         {% block style %}
         {% endblock %}
     </style>
@@ -35,6 +39,7 @@
 <body>
    <nav class="navbar">
       <span class="navbar-brand">Game Store</span>
+      <a href="/logout" class="logout">Logout</a>
   </nav>
 {% block content %}
 {% endblock %}
