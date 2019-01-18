@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from django.utils.datetime_safe import datetime
+
 from JSGameStore import settings
 
 
@@ -27,8 +29,10 @@ class Purchase(models.Model):
     )
     pid = models.TextField(primary_key=True)
     ref = models.TextField()
-    result = models.TextField()
+    result = models.BooleanField()
     checksum = models.TextField()
+    amount = models.FloatField(default=0.0)
+    time = models.DateTimeField(default=datetime.now)
 
 class Score(models.Model):
     user = models.ForeignKey(

@@ -21,9 +21,9 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 if user.groups.filter(name='dev').exists():
-                    return HttpResponseRedirect('../developer/')
+                    return HttpResponseRedirect('../developer')
                 elif user.groups.filter(name='player'):
-                    return HttpResponseRedirect('../player/games/')
+                    return HttpResponseRedirect('../player')
             else:
                 return render(request, 'login.html', {'form': form,'msg':'Username or password is not correct!','can_not_login': True})
         else:
@@ -67,7 +67,7 @@ def user_register(request):
     form = RegisterForm()
     return render(request,'register.html', {'form':form,'error':''})
 
-@login_required()
+@login_required(login_url='login')
 def developer_main(request):
     user = request.user
     if len(user.groups.filter(name='player')) > 0:
@@ -77,7 +77,7 @@ def developer_main(request):
     #return HttpResponse('This is test developer main' + str(request.user))
     return render(request,'developer_main.html', {'games':game_list})
 
-@login_required()
+@login_required(login_url='login')
 def player_main(request):
     user = request.user
     if len(user.groups.filter(name='dev')) > 0:
@@ -86,12 +86,12 @@ def player_main(request):
     purchase_history = Purchase.objects.filter(user=user)
     return HttpResponse('This is test player main' + str(user))
 
-@login_required()
+@login_required(login_url='login')
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('login.html')
 
-@login_required()
+@login_required(login_url='login')
 def developer_create_game(request):
     user = request.user
     if request.method == 'POST':
@@ -111,3 +111,8 @@ def developer_create_game(request):
             return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
+
+@login_required(login_url='login')
+def developer_modify_game(request):
+    pass
+
