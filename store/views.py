@@ -41,7 +41,18 @@ def player_list_games(request):
 def developer_modify_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
     if game.developer != request.user:
-        return HttpResponseRedirect('login', {'msg':'You don\' t have the access to this game'})
+        return redirect('/login', {'msg':'You don\' t have the access to this game'})
+    if request.method == 'POST':
+        form = CreateGameForm(request.POST)
+        if form.is_valid():
+            game.game_name = form.cleaned_data['game_name']
+            game.price = form.cleaned_data['game_price']
+            game.url = form.cleaned_data['game_url']
+            game.save()
+            return render(request, 'create_game.html', {'form': form, 'msg':'Game successfully updated'})
+        else:
+            return render(request, 'create_game.html', {'form': form, 'msg': 'Form error'})
+
     form = CreateGameForm(initial={'game_url':game.url, 'game_name':game.game_name, 'game_price': game.price})
     return render(request, 'create_game.html', {'form': form})
 
@@ -67,31 +78,31 @@ def user_register(request):
     form = RegisterForm()
     return render(request,'register.html', {'form':form,'error':''})
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def developer_main(request):
     user = request.user
     if len(user.groups.filter(name='player')) > 0:
-        return HttpResponseRedirect('player_main')
+        return redirect('player_main')
     game_list = Game.objects.filter(developer=user)
 
     #return HttpResponse('This is test developer main' + str(request.user))
     return render(request,'developer_main.html', {'games':game_list})
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def player_main(request):
     user = request.user
     if len(user.groups.filter(name='dev')) > 0:
         print("Not player")
-        return HttpResponseRedirect('developer_main')
+        return redirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
     return HttpResponse('This is test player main' + str(user))
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def logout(request):
     auth.logout(request)
-    return HttpResponseRedirect('login')
+    return redirect('login')
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def developer_create_game(request):
     user = request.user
     if request.method == 'POST':
@@ -112,8 +123,16 @@ def developer_create_game(request):
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
 
-@login_required(login_url='login')
-def developer_game_buyer(request, game_id):
+@login_required(login_url='/login')
+def developer_game_buyer(request, game_name):
     #list all purchase history of a game
    pass
 
+@login_required(login_url='/login')
+def store(request):
+    user = request.user
+    if len(user.groups.filter(name='dev')) > 0:
+        print("Not player")
+        return redirect('developer_main')
+    all_games = Game.objects.all()
+    return render(request, "store.html", {'games', all_games})
