@@ -71,12 +71,11 @@ def user_register(request):
 def developer_main(request):
     user = request.user
     if len(user.groups.filter(name='player')) > 0:
-
         return HttpResponseRedirect('player_main')
-    games_sold = Game.objects.filter(developer=user)
+    game_list = Game.objects.filter(developer=user)
 
     #return HttpResponse('This is test developer main' + str(request.user))
-    return render(request,'developer_main.html', {'games':'List of games'})
+    return render(request,'developer_main.html', {'games':game_list})
 
 @login_required()
 def player_main(request):
@@ -112,4 +111,3 @@ def developer_create_game(request):
             return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
-
