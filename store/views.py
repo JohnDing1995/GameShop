@@ -37,9 +37,6 @@ def user_login(request):
 def player_play_game(request, game_name):
     return HttpResponse('This is test player, playing game' + str(game_name))
 
-def player_list_games(request):
-    return HttpResponse('This is game list of test player')
-
 
 def developer_modify_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
@@ -98,7 +95,7 @@ def player_main(request):
         print("Not player")
         return redirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
-    return HttpResponse('This is test player main' + str(user))
+    return render(request, 'player_main.html', {'purchase_history': purchase_history})
 
 @login_required(login_url='/login')
 def logout(request):
