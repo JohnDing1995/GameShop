@@ -54,7 +54,7 @@ def developer_modify_game(request, game_name):
             return render(request, 'create_game.html', {'form': form, 'msg': 'Form error'})
 
     form = CreateGameForm(initial={'game_url':game.url, 'game_name':game.game_name, 'game_price': game.price})
-    return render(request, 'create_game.html', {'form': form})
+    return render(request, 'create_game.html', {'form': form, "action":"Modify game"})
 
 
 def user_register(request):
@@ -95,7 +95,7 @@ def player_main(request):
         print("Not player")
         return redirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
-    return HttpResponse('This is test player main' + str(user))
+    return render(request,'player_main.html', {'purchase_history':purchase_history})
 
 @login_required(login_url='/login')
 def logout(request):
@@ -113,15 +113,15 @@ def developer_create_game(request):
             url = form.cleaned_data['game_url']
             if len(Game.objects.filter(game_name=game_name)) > 0:
                 print('Game already exists')
-                return render(request, "create_game.html", {'form': form, 'msg':'Game already exists'})
+                return render(request, "create_game.html", {'form': form, 'msg':'Game already exists', "action":"Create game"})
             else:
                 g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url)
                 g.save()
-                return render(request, "create_game.html", {'form': form, 'msg': 'Game created'})
+                return render(request, "create_game.html", {'form': form, 'msg': 'Game created', "action":"Create game"})
         else:
-            return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
+            return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input', "action":"Create game"})
     form = CreateGameForm()
-    return render(request, "create_game.html", {'form': form})
+    return render(request, "create_game.html", {'form': form, "action":"Create game"})
 
 @login_required(login_url='/login')
 def developer_game_buyer(request, game_name):
@@ -135,4 +135,4 @@ def store(request):
         print("Not player")
         return redirect('developer_main')
     all_games = Game.objects.all()
-    return render(request, "store.html", {'games', all_games})
+    return render(request, "store.html", {'games': all_games})

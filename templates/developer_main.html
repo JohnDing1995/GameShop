@@ -1,21 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block style %}
-
-  .my_games {
-    background-color:#E94209;
-    color:white;
-    font-size:20px;
-    padding:20px;
-  }
-
   th,td {
     padding:20px;
   }
-
 {% endblock %}
 {% block content %}
-      <div class="my_games">My games</div>
+      <div class="page_header">Dashboard</div>
       <table style="margin:20px;">
         <thead>
           <tr>
@@ -27,8 +18,9 @@
           {% for game in games %}
             <tr>
               <td>{{ game.game_name }}</td>
-              <td>${{ game.price }}</td>
+              <td>€{{ game.price }}</td>
               <td><a href="games/{{ game.game_name }}">See sales</a></td>
+              <td><a href="games/{{ game.game_name }}/modify">Modify</a></td>
             </tr>
           {% endfor %}
         </tbody>
