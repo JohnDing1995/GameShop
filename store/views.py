@@ -23,7 +23,7 @@ def user_login(request):
                 if user.groups.filter(name='dev').exists():
                     return HttpResponseRedirect('../developer/')
                 elif user.groups.filter(name='player'):
-                    return HttpResponseRedirect('../player/games/')
+                    return HttpResponseRedirect('../player/')
             else:
                 return render(request, 'login.html', {'form': form,'msg':'Username or password is not correct!','can_not_login': True})
         else:
@@ -35,7 +35,8 @@ def player_play_game(request, game_id):
     return HttpResponse('This is test player, playing game' + str(game_id))
 
 def player_list_games(request):
-    return HttpResponse('This is game list of test player')
+    game_list = Game.objects.all()
+    return render(request,'games.html', {'games':game_list})
 
 
 def developer_list_games(request):
@@ -84,7 +85,7 @@ def player_main(request):
         print("Not player")
         return HttpResponseRedirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
-    return HttpResponse('This is test player main' + str(user))
+    return render(request,'player_main.html', {'purchase_history':purchase_history})
 
 @login_required()
 def logout(request):
