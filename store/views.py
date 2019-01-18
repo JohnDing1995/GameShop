@@ -38,7 +38,8 @@ def user_login(request):
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
 def player_play_game(request, game_name):
-    return HttpResponse('This is test player, playing game' + str(game_name))
+    game = Game.objects.get(game_name=game_name)
+    return render(request,'play.html', {'game':game})
 
 
 def developer_modify_game(request, game_name):
@@ -175,5 +176,3 @@ def player_buy_game(request, game_name):
     else:
         message = 'Purchase error'
         return redirect('/player/store', {'msg': message})
-
-
