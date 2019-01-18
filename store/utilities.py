@@ -23,7 +23,7 @@ def pay(game, user, amount):
                           'error_url': 'player/store',
                           'checksum': checksum
                       })
-    result = requests.codes.ok == '200'
+    result = requests.codes.ok == 200
     p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=result)
     p.save()
     return result

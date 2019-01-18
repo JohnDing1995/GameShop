@@ -12,10 +12,10 @@
       </tr>
     </thead>
     <tbody>
-      {% for game in games %}
+      {% for each in purchase_history %}
         <tr>
-          <td>{{ purchase_history.game.game_name }}</td>
-          <td><a href="games/{{ game.game_name }}">Play</a></td>
+          <td>{{ each.game.game_name }}</td>
+          <td><a href="games/{{ each.game.game_name }}">Play</a></td>
         </tr>
       {% endfor %}
     </tbody>

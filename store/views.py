@@ -1,4 +1,6 @@
 import uuid
+from hashlib import md5
+import requests
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
@@ -12,6 +14,7 @@ from django.contrib.auth import login
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase
 from store.utilities import pay
+
 
 
 def user_login(request):
@@ -144,8 +147,28 @@ def player_buy_game(request, game_name):
         print("Not player")
         return redirect('developer_main')
     game = Game.objects.get(game_name=game_name)
-    if pay(game, user, game.price):
+    pid = uuid.uuid1().hex
+    amount = game.price
+    checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
+    m = md5(checksum_str.encode("ascii"))
+    checksum = m.hexdigest()
+    r = requests.post('http://payments.webcourse.niksula.hut.fi/pay/',
+                      data={
+                          'pid': pid,
+                          'token': 'c12ccb024b3d72922f9b85575e76154d',
+                          'amount': amount,
+                          'sid': 'plr',
+                          'success_url': '/player/store',
+                          'cancel_url': '/player/store',
+                          'error_url': 'player/store',
+                          'checksum': checksum
+                      })
+    result = requests.codes.ok == 200
+    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=result)
+    p.save()
+    if result:
         message = 'You successfully brought game' + game_name
+        print(message)
         game.copies_sold += game.copies_sold + 1
         game.save()
         return redirect('/player/store', {'msg': message})

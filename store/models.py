@@ -32,7 +32,8 @@ class Purchase(models.Model):
     result = models.BooleanField()
     checksum = models.TextField()
     amount = models.FloatField(default=0.0)
-    time = models.DateTimeField(default=datetime.now)
+    time = models.DateTimeField(auto_now_add=True, blank=True)
+
 
 class Score(models.Model):
     user = models.ForeignKey(
