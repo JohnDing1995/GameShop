@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
@@ -9,6 +11,7 @@ from django.contrib.auth import login
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase
+from store.utilities import pay
 
 
 def user_login(request):
@@ -54,7 +57,7 @@ def developer_modify_game(request, game_name):
             return render(request, 'create_game.html', {'form': form, 'msg': 'Form error'})
 
     form = CreateGameForm(initial={'game_url':game.url, 'game_name':game.game_name, 'game_price': game.price})
-    return render(request, 'create_game.html', {'form': form, "action":"Modify game"})
+    return render(request, 'create_game.html', {'form': form})
 
 
 def user_register(request):
@@ -95,7 +98,7 @@ def player_main(request):
         print("Not player")
         return redirect('developer_main')
     purchase_history = Purchase.objects.filter(user=user)
-    return render(request,'player_main.html', {'purchase_history':purchase_history})
+    return HttpResponse('This is test player main' + str(user))
 
 @login_required(login_url='/login')
 def logout(request):
@@ -113,15 +116,15 @@ def developer_create_game(request):
             url = form.cleaned_data['game_url']
             if len(Game.objects.filter(game_name=game_name)) > 0:
                 print('Game already exists')
-                return render(request, "create_game.html", {'form': form, 'msg':'Game already exists', "action":"Create game"})
+                return render(request, "create_game.html", {'form': form, 'msg':'Game already exists'})
             else:
                 g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url)
                 g.save()
-                return render(request, "create_game.html", {'form': form, 'msg': 'Game created', "action":"Create game"})
+                return render(request, "create_game.html", {'form': form, 'msg': 'Game created'})
         else:
-            return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input', "action":"Create game"})
+            return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
     form = CreateGameForm()
-    return render(request, "create_game.html", {'form': form, "action":"Create game"})
+    return render(request, "create_game.html", {'form': form})
 
 @login_required(login_url='/login')
 def developer_game_buyer(request, game_name):
@@ -136,3 +139,21 @@ def store(request):
         return redirect('developer_main')
     all_games = Game.objects.all()
     return render(request, "store.html", {'games': all_games})
+
+@login_required(login_url='/login')
+def player_buy_game(request, game_name):
+    user = request.user
+    if len(user.groups.filter(name='dev')) > 0:
+        print("Not player")
+        return redirect('developer_main')
+    game = Game.objects.get(game_name=game_name)
+    if pay(game, user, game.price):
+        message = 'You successfully brought game' + game_name
+        game.copies_sold += game.copies_sold + 1
+        game.save()
+        return redirect('/player/store', {'msg': message})
+    else:
+        message = 'Purchase error'
+        return redirect('/player/store', {'msg': message})
+
+
