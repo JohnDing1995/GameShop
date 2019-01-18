@@ -31,19 +31,19 @@ def user_login(request):
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
-def player_play_game(request, game_id):
-    return HttpResponse('This is test player, playing game' + str(game_id))
+def player_play_game(request, game_name):
+    return HttpResponse('This is test player, playing game' + str(game_name))
 
 def player_list_games(request):
     return HttpResponse('This is game list of test player')
 
 
-def developer_list_games(request):
-    return HttpResponse('This is game list of test developer')
-
-
-def developer_set_game(request, game_id):
-    return HttpResponse('This is test developer, setting game' + str(game_id))
+def developer_modify_game(request, game_name):
+    game = Game.objects.get(game_name=game_name)
+    if game.developer != request.user:
+        return HttpResponseRedirect('login', {'msg':'You don\' t have the access to this game'})
+    form = CreateGameForm(initial={'game_url':game.url, 'game_name':game.game_name, 'game_price': game.price})
+    return render(request, 'create_game.html', {'form': form})
 
 
 def user_register(request):
@@ -89,7 +89,7 @@ def player_main(request):
 @login_required(login_url='login')
 def logout(request):
     auth.logout(request)
-    return HttpResponseRedirect('login.html')
+    return HttpResponseRedirect('login')
 
 @login_required(login_url='login')
 def developer_create_game(request):
