@@ -6,6 +6,7 @@ import json
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -14,7 +15,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
-from store.models import Game, Purchase
+from store.models import Game, Purchase, Score
 from store.utilities import pay
 
 ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
@@ -207,7 +208,14 @@ def player_submit_score(request, game_name):
     if request.method == 'POST':
         print('score')
         game = Game.objects.get(game_name=game_name)
-        json_score = request.POST.get('data')
-        json_score = json.loads(json_score)
-        print(json_score.score)
+        current_score = request.POST.get('score')
+        try:
+            record_score = Score.objects.get(game=game, user=user).score
+            if record_score < float(current_score):
+                new_score = Score.objects.get(game=game, user=user)
+                new_score.score = current_score
+                new_score.save()
+        except ObjectDoesNotExist:
+            Score.objects.create(game=game, user=user, score=current_score)
+
     return JsonResponse({'message':'Score submitted'})

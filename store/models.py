@@ -51,3 +51,20 @@ class Score(models.Model):
 
     class Meta:
         unique_together = ("user", "game")
+
+class GameState(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        name="user",
+        on_delete=models.CASCADE,
+    )
+    game = models.ForeignKey(
+        Game,
+        name="game",
+        on_delete=models.CASCADE
+    )
+    time = models.DateTimeField(default=datetime.now, blank=True)
+    game_state = models.CharField(max_length=255, default="")
+
+    class Meta:
+        unique_together = ("user", "game")

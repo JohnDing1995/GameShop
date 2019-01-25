@@ -30,6 +30,7 @@
       $.ajax({
         url: window.location+"/submit_score",
         method: "POST",
+          dataType: 'json',
         data: {'score':event.data.score},
         success: function(result) {
           console.log("Score submitted");
