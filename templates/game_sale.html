@@ -6,21 +6,25 @@
   }
 {% endblock %}
 {% block content %}
-<div class="page_header"><a href="/developer">Dashboard</a> > Sales</div>
-  <table style="margin:20px;">
-    <thead>
-      <tr>
-        <th>User ID</th>
-          <th>Date</th>
-          <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for each in sale %}
-        <tr>
-          <td>{{ each.game.game_name }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="w3-bar w3-black">
+       <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/developer'">Dashboard</button>
+       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/developer/games'">Statistics</button>
+   </div>
+
+        <table style="margin:20px;">
+            <thead>
+            <tr>
+                <th>Game Name</th>
+                <th>Purchase Date</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for each in sale %}
+                <tr>
+                  <td>{{ each.game.game_name }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 {% endblock %}

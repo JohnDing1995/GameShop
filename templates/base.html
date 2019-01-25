@@ -28,8 +28,13 @@
             background-color: #000000;
             font-family: LucidaGrande;
         }
-        .navbar-brand {
-            color: #FFFFFF;
+
+        a.header {
+            color:white;
+        }
+
+        a.header:hover {
+            color: white;
         }
 
         .logout {
@@ -38,7 +43,7 @@
         }
 
         .logout:hover{
-
+            color:#E94209;
         }
 
         .page_header {
@@ -53,14 +58,15 @@
             text-align: center;
             margin-right: auto;
             margin-left: auto;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .upload{
             color: white;
-            font-size: 12px;
+            font-size: 15px;
+            font-family: Helvetica;
             background-color: #E94209 ;
-            padding: 6px 14px 6px 14px;
+            padding: 6px 18px 6px 18px;
             border: solid #E94209 2px;
             border-radius: 16px;
             transition: all 0.3s ease-in-out;
@@ -68,8 +74,8 @@
 
         .upload:hover {
             color: #fff ;
-            background-color: #000000;
-            border:solid #000000 2px;
+            background-color: #aaaaaa;
+            border:solid #aaaaaa 2px;
         }
 
         {% block style %}
@@ -80,9 +86,11 @@
 {% endblock %}
 <body>
    <nav class="navbar">
-      <span class="navbar-brand">Game Store</span>
+       <h4><a class= "header" href="/developer">Game Store</a></h4>
       <a href="/logout" class="logout">Logout</a>
   </nav>
+
 {% block content %}
 {% endblock %}
+
 </body>

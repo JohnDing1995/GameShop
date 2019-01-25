@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div class="page_header"><a href="/developer">Dashboard</a> > Upload a new game</div>
+
     <form method="post">
         {% csrf_token %}
     {{ form.as_p }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">{{ action }}</button>
-        </form>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+    </form>
     <div class="alert">
     {{ msg }}
     </div>
