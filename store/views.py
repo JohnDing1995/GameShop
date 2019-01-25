@@ -130,7 +130,10 @@ def developer_create_game(request):
 @login_required(login_url='/login')
 def developer_game_buyer(request, game_name):
     #list all purchase history of a game
-   pass
+    user = request.user
+    game_history = Purchase.objects.filter(game__game_name=game_name)
+    return render(request, "game_sale.html", {'sale':game_history})
+
 
 @login_required(login_url='/login')
 def store(request):

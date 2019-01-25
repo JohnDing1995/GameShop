@@ -32,7 +32,7 @@ class Purchase(models.Model):
     result = models.BooleanField()
     checksum = models.TextField()
     amount = models.FloatField(default=0.0)
-    time = models.DateTimeField(auto_now_add=True, blank=True)
+    time = models.DateTimeField(default=datetime.now, blank=True)
 
 
 class Score(models.Model):
@@ -47,6 +47,7 @@ class Score(models.Model):
         on_delete=models.CASCADE
     )
     score = models.FloatField()
+    time = models.DateTimeField(default=datetime.now, blank=True)
 
     class Meta:
         unique_together = ("user", "game")

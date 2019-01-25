@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block style %}
+{% endblock %}
+{% block content %}
+  <div class="page_header">Dashboard</div>
+  <table style="margin:20px;">
+    <thead>
+      <tr>
+        <th>Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for each in sale %}
+        <tr>
+          <td>{{ each.game.game_name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
