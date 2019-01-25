@@ -2,6 +2,7 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <head>
     <meta charset="UTF-8">
     <title>Welcome to Game Store</title>
@@ -11,12 +12,16 @@
     <script src="{% static 'js/bootstrap.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <style>
+        body{
+            font-family: LucidaGrande;
+            font-size: 14px;
+        }
+
         .footer{
             height: 70px;
             background-color: rgba(29,3,3,0.99);
             text-align: center;
             color: white;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .navbar {
@@ -29,13 +34,42 @@
 
         .logout {
             text-align:right;
+            color: white;
+        }
+
+        .logout:hover{
+
         }
 
         .page_header {
-          background-color:#E94209;
-          color:white;
-          font-size:20px;
-          padding:20px;
+            background-color: #d3d9df;
+            color:black;
+            font-size:1em;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .upload_container{
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 15px;
+        }
+
+        .upload{
+            color: white;
+            font-size: 12px;
+            background-color: #E94209 ;
+            padding: 6px 14px 6px 14px;
+            border: solid #E94209 2px;
+            border-radius: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .upload:hover {
+            color: #fff ;
+            background-color: #000000;
+            border:solid #000000 2px;
         }
 
         {% block style %}

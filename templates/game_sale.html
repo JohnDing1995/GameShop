@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block style %}
+    th,td {
+    padding:20px;
+  }
 {% endblock %}
 {% block content %}
-  <div class="page_header">Dashboard</div>
+<div class="page_header"><a href="/developer">Dashboard</a> > Sales</div>
   <table style="margin:20px;">
     <thead>
       <tr>
-        <th>Title</th>
+        <th>User ID</th>
+          <th>Date</th>
+          <th></th>
       </tr>
     </thead>
     <tbody>
