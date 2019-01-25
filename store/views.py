@@ -15,6 +15,7 @@ from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase
 from store.utilities import pay
 
+ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
 
 
 def user_login(request):
@@ -39,6 +40,7 @@ def user_login(request):
 
 def player_play_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
+
     return render(request,'play.html', {'game':game})
 
 
@@ -179,3 +181,16 @@ def player_buy_game(request, game_name):
     else:
         message = 'Purchase error'
         return redirect('/player/store', {'msg': message})
+
+@login_required()
+def player_save_game(request, game_name):
+    user = request.user
+
+
+@login_required()
+def player_load_game(request, game_name):
+    user = request.user
+
+@login_required()
+def player_save_score(request, game_name):
+    user = request.user
