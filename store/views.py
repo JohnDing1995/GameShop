@@ -192,5 +192,5 @@ def player_load_game(request, game_name):
     user = request.user
 
 @login_required()
-def player_save_score(request, game_name):
+def player_submit_score(request, game_name):
     user = request.user
