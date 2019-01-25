@@ -6,11 +6,10 @@
   }
 {% endblock %}
 {% block content %}
-
-    <div class="w3-bar w3-black">
-        <button class="w3-bar-item w3-button" onclick="window.location.href='/developer'">Dashboard</button>
-        <button class="w3-bar-item w3-button" onclick="window.location.href='/developer/games'">Statistics</button>
-    </div>
+      <div class="w3-bar w3-black">
+       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/developer'">Dashboard</button>
+       <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/developer/games'">Statistics</button>
+   </div>
 
     <div class = "upload_container"><a href="/developer/create_game" class = "upload">UPLOAD A NEW GAME</a></div>
       <table style="margin:20px;">
@@ -25,26 +24,11 @@
             <tr>
               <td>{{ game.game_name }}</td>
               <td>€{{ game.price }}</td>
-              <td><a href="games/{{ game.game_name }}">See sales</a></td>
               <td><a href="games/{{ game.game_name }}/modify">Modify</a></td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
 
-<script>
-function tabbar(evt, tabName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("tab");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " w3-red";
-}
-</script>
+
 {% endblock %}
