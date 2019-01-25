@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block style %}
+  th,td {
+    padding:20px;
+  }
+{% endblock %}
+{% block content %}
+      <div class="w3-bar w3-black">
+       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/developer'">Dashboard</button>
+       <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/developer/games'">Statistics</button>
+   </div>
+
+    <div class = "upload_container"><a href="/developer/create_game" class = "upload">UPLOAD A NEW GAME</a></div>
+      <table style="margin:20px;">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for game in games %}
+            <tr>
+              <td>{{ game.game_name }}</td>
+              <td>€{{ game.price }}</td>
+              <td><a href="games/{{ game.game_name }}/modify">Modify</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+
+{% endblock %}

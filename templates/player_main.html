@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block style %}
+{% endblock %}
+{% block content %}
+  <div class="page_header">Dashboard</div>
+  <div style="margin:20px;">Go to the <a href="/player/store">store</a> or play your purchased games below<div>
+  <table style="margin:20px;">
+    <thead>
+      <tr>
+        <th>Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for each in purchase_history %}
+        <tr>
+          <td>{{ each.game.game_name }}</td>
+          <td><a href="games/{{ each.game.game_name }}">Play</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

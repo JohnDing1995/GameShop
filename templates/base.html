@@ -1,0 +1,96 @@
+
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Game Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static '/css/bootstrap.min.css' %}">
+
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+        body{
+            font-family: LucidaGrande;
+            font-size: 14px;
+        }
+
+        .footer{
+            height: 70px;
+            background-color: rgba(29,3,3,0.99);
+            text-align: center;
+            color: white;
+        }
+
+        .navbar {
+            background-color: #000000;
+            font-family: LucidaGrande;
+        }
+
+        a.header {
+            color:white;
+        }
+
+        a.header:hover {
+            color: white;
+        }
+
+        .logout {
+            text-align:right;
+            color: white;
+        }
+
+        .logout:hover{
+            color:#E94209;
+        }
+
+        .page_header {
+            background-color: #d3d9df;
+            color:black;
+            font-size:1em;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .upload_container{
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 20px;
+        }
+
+        .upload{
+            color: white;
+            font-size: 15px;
+            font-family: Helvetica;
+            background-color: #E94209 ;
+            padding: 6px 18px 6px 18px;
+            border: solid #E94209 2px;
+            border-radius: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .upload:hover {
+            color: #fff ;
+            background-color: #aaaaaa;
+            border:solid #aaaaaa 2px;
+        }
+
+        {% block style %}
+        {% endblock %}
+    </style>
+</head>
+{% block script %}
+{% endblock %}
+<body>
+   <nav class="navbar">
+       <h4><a class= "header" href="/developer">Game Store</a></h4>
+      <a href="/logout" class="logout">Logout</a>
+  </nav>
+
+{% block content %}
+{% endblock %}
+
+</body>

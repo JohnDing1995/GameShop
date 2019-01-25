@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block style %}
+<style>
+    body{
+        background-attachment:fixed;
+        background-size: cover;
+    }
+    .container {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .form-signin {
+      max-width: 330px;
+      padding: 15px;
+      margin: 0 auto;
+    }
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+    .form-signin .checkbox {
+      font-weight: normal;
+    }
+    .form-signin .form-control {
+      position: relative;
+      height: auto;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .form-signin .form-control:focus {
+      z-index: 2;
+    }
+    .form-signin input[type="email"] {
+      margin-bottom: -1px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .form-signin input[type="password"] {
+      margin-bottom: 10px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+    .logout {
+      visibility:hidden;
+    }
+</style>
+{% endblock %}
+
+    {% block content %}
+<div class="container" style="margin-bottom: 150px">
+    <h2 class="form-signin-heading" style="font-family: LucidaGrande;font-size: 1.5 em; color: black;">Please Login Here</h2>
+    <form class="form-signin" method="post">
+        <!--<label for="inputEmail" class="sr-only">Email address</label>-->
+        <!--<input type="text" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>-->
+        <!--<label for="inputPassword" class="sr-only">Password</label>-->
+        <!--<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>-->
+        {% csrf_token %}
+    {{ form.as_p }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+  <div class="form-signin">
+  </div>
+      {% if can_not_login %}
+        <div class="alert alert-danger alert-dismissible alert-box" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;
+                </span>
+            </button>{{ msg }}
+
+     {% endif %}
+</div>
+</div>
+{% endblock %}}
+         <div id="footer" class = "footer navbar-fixed-bottom" style=" width: 100%; margin-top: 30px;height: 80px">
+         <div class="footer-div" style="font-size: 12px;">
+             <br>
+             All rights reserved
+             <br>
+         </div>
+     </div>
