@@ -93,7 +93,6 @@ def developer_main(request):
     if len(user.groups.filter(name='player')) > 0:
         return redirect('player_main')
     game_list = Game.objects.filter(developer=user)
-
     #return HttpResponse('This is test developer main' + str(request.user))
     return render(request,'developer_main.html', {'games':game_list})
 
@@ -133,10 +132,10 @@ def developer_create_game(request):
     return render(request, "create_game.html", {'form': form})
 
 @login_required(login_url='/login')
-def developer_game_buyer(request, game_name):
+def developer_sales(request):
     #list all purchase history of a game
     user = request.user
-    game_history = Purchase.objects.filter(game__game_name=game_name)
+    game_history = Purchase.objects.filter(game__developer=user)
     return render(request, "game_sale.html", {'sale':game_history})
 
 
