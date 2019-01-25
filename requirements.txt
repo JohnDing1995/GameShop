@@ -20,3 +20,5 @@ pyecharts-javascripthon==0.0.6
 pyecharts-jupyter-installer==0.0.3
 pyecharts-snapshot==0.1.10
 pytz==2018.7
+requests==2.21.0
+
