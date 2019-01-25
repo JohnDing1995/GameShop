@@ -5,41 +5,6 @@
     margin:20px;
   }
 {% endblock %}
-{% block script %}
-<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
-{% csrf_token %}
-<script>
-  window.addEventListener("message", receiveGameMessage);
-
-  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-
-  function csrfSafeMethod(method) {
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
-  $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
-      }
-  });
-
-  function receiveGameMessage(event) {
-    console.log(event.data);
-    if (event.data.messageType == "SCORE") {
-      $.ajax({
-        url: window.location+"/submit_score",
-        method: "POST",
-          dataType: 'json',
-        data: {'score':event.data.score},
-        success: function(result) {
-          console.log("Score submitted");
-        }
-      });
-    }
-  }
-</script>
-{% endblock %}
 {% block content %}
   <div class="page_header"><a href="/developer">Dashboard</a> > Play {{ game.game_name }}</div>
   <iframe width="800" height="600" src="{{ game.url }}"></iframe>
