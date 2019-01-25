@@ -1,12 +1,14 @@
 import uuid
 from hashlib import md5
 import requests
+import json
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
@@ -185,6 +187,14 @@ def player_buy_game(request, game_name):
 @login_required()
 def player_save_game(request, game_name):
     user = request.user
+    if request.method == 'POST':
+        print('save')
+        game = Game.objects.get(game_name=game_name)
+        json_score = request.POST.get('data')
+        json_score = json.loads(json_score)
+        return JsonResponse({'message':'Game saved'})
+
+
 
 
 @login_required()
@@ -194,3 +204,10 @@ def player_load_game(request, game_name):
 @login_required()
 def player_submit_score(request, game_name):
     user = request.user
+    if request.method == 'POST':
+        print('score')
+        game = Game.objects.get(game_name=game_name)
+        json_score = request.POST.get('data')
+        json_score = json.loads(json_score)
+        print(json_score.score)
+    return JsonResponse({'message':'Score submitted'})

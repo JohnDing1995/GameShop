@@ -33,7 +33,7 @@ class Purchase(models.Model):
     checksum = models.TextField()
     amount = models.FloatField(default=0.0)
     time = models.DateTimeField(default=datetime.now, blank=True)
-
+    game_state = models.CharField(max_length=255, default="")
 
 class Score(models.Model):
     user = models.ForeignKey(
