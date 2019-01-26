@@ -178,3 +178,11 @@ def player_buy_game(request, game_name):
     else:
         message = 'Purchase error'
         return redirect('/player/store', {'msg': message})
+
+
+def developer_delete_game(request, game_name):
+    user = request.user
+    game = Game.objects.filter(game_name=game_name, developer=user)
+    game.delete()
+    message = 'Game deleted'
+    return redirect('/developer', {'msg': message})

@@ -25,6 +25,7 @@
               <td>{{ game.game_name }}</td>
               <td>€{{ game.price }}</td>
               <td><a href="games/{{ game.game_name }}/modify">Modify</a></td>
+                          <td><a href="games/{{ game.game_name }}/delete">Delete</a></td>
             </tr>
           {% endfor %}
         </tbody>
