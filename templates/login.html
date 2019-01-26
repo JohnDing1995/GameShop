@@ -48,7 +48,7 @@
     }
 </style>
 {% endblock %}
-
+<body>
     {% block content %}
 <div class="container" style="margin-bottom: 150px">
     <h2 class="form-signin-heading" style="font-family: LucidaGrande;font-size: 1.5 em; color: black;">Please Login Here</h2>
@@ -59,7 +59,8 @@
         <!--<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>-->
         {% csrf_token %}
     {{ form.as_p }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-danger btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/register'" type="button">Register</button>
         </form>
   <div class="form-signin">
   </div>

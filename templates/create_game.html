@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-
-    <form method="post">
+<br><br>
+    <form method="post" class="col-md-4 offset-md-4 align-items-center">
         {% csrf_token %}
     {{ form.as_p }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+        <button class="btn btn-lg btn-danger btn-block" type="submit">Submit</button>
+    <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/developer'" type="button">Back</button>
     </form>
     <div class="alert">
     {{ msg }}
