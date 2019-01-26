@@ -23,6 +23,8 @@
               {% for each in sale %}
                 <tr>
                   <td>{{ each.game.game_name }}</td>
+                                  <td>{{ each.time.astimezone |date:'d-m-y H:i:s'}}</td>
+                                  <td>{{ each.game.price }}</td>
                 </tr>
               {% endfor %}
             </tbody>
