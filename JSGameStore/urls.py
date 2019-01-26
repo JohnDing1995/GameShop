@@ -22,6 +22,7 @@ urlpatterns = [
     path('player/', include('store.player_urls')),
     path('developer/', include('store.developer_urls')),
     path('login/', views.user_login, name = 'login'),
+    path('', views.user_login, name='login'),
     path('register/', views.user_register, name = 'register'),
     path('logout/', views.logout, name = 'logout')
 ]
