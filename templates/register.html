@@ -10,7 +10,7 @@
       max-width: 330px;
       padding: 15px;
       margin: 0 auto;
-        margin-top: 100px;
+        margin-top: 50px;
 
     }
     .form-signin .form-signin-heading,
@@ -63,8 +63,11 @@
 {#        <input type="password" id="password" class="form-control" placeholder="Password" required>#}
 {#                <label for="repeatPassword" class="sr-only">Repeat Your Password</label>#}
 {#        <input type="password" id="repeatPassword" class="form-control" placeholder="Repeat your Password" required>#}
-
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+<br>
+        <button class="btn btn-lg btn-danger btn-block" type="submit">Sign up</button>
+        <br>
+        <div>Already have a account?</div>
+        <button class="btn btn-lg btn-secondary btn-block" type="submit" onclick="window.location.href='/'">Sign in</button>
     </form>
  {% if error !=  "" %}
         <div class="alert alert-danger alert-dismissible alert-box" role="alert">
