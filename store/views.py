@@ -222,3 +222,10 @@ def player_submit_score(request, game_name):
             Score.objects.create(game=game, user=user, score=current_score)
 
     return JsonResponse({'message':'Score submitted'})
+
+@login_required(login_url='/login')
+def developer_sales(request):
+    #list all purchase history of a game
+    user = request.user
+    game_history = Purchase.objects.filter(game__developer=user)
+    return render(request, "game_sale.html", {'sale':game_history})
