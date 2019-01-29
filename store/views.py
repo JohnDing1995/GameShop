@@ -1,20 +1,24 @@
 import uuid
 from hashlib import md5
 import requests
+import json
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
-from store.models import Game, Purchase
+from store.models import Game, Purchase, Score
 from store.utilities import pay
 
+ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
 
 
 def user_login(request):
@@ -39,6 +43,7 @@ def user_login(request):
 
 def player_play_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
+
     return render(request,'play.html', {'game':game})
 
 
@@ -88,6 +93,7 @@ def developer_main(request):
     if len(user.groups.filter(name='player')) > 0:
         return redirect('player_main')
     game_list = Game.objects.filter(developer=user)
+
     #return HttpResponse('This is test developer main' + str(request.user))
     return render(request,'developer_main.html', {'games':game_list})
 
@@ -127,10 +133,10 @@ def developer_create_game(request):
     return render(request, "create_game.html", {'form': form})
 
 @login_required(login_url='/login')
-def developer_sales(request):
+def developer_game_buyer(request, game_name):
     #list all purchase history of a game
     user = request.user
-    game_history = Purchase.objects.filter(game__developer=user)
+    game_history = Purchase.objects.filter(game__game_name=game_name)
     return render(request, "game_sale.html", {'sale':game_history})
 
 
@@ -179,10 +185,37 @@ def player_buy_game(request, game_name):
         message = 'Purchase error'
         return redirect('/player/store', {'msg': message})
 
-
-def developer_delete_game(request, game_name):
+@login_required()
+def player_save_game(request, game_name):
     user = request.user
-    game = Game.objects.filter(game_name=game_name, developer=user)
-    game.delete()
-    message = 'Game deleted'
-    return redirect('/developer', {'msg': message})
+    if request.method == 'POST':
+        print('save')
+        game = Game.objects.get(game_name=game_name)
+        json_score = request.POST.get('data')
+        json_score = json.loads(json_score)
+        return JsonResponse({'message':'Game saved'})
+
+
+
+
+@login_required()
+def player_load_game(request, game_name):
+    user = request.user
+
+@login_required()
+def player_submit_score(request, game_name):
+    user = request.user
+    if request.method == 'POST':
+        print('score')
+        game = Game.objects.get(game_name=game_name)
+        current_score = request.POST.get('score')
+        try:
+            record_score = Score.objects.get(game=game, user=user).score
+            if record_score < float(current_score):
+                new_score = Score.objects.get(game=game, user=user)
+                new_score.score = current_score
+                new_score.save()
+        except ObjectDoesNotExist:
+            Score.objects.create(game=game, user=user, score=current_score)
+
+    return JsonResponse({'message':'Score submitted'})
