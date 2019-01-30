@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block style %}
+    th,td {
+    padding:20px;
+  }
 {% endblock %}
 {% block content %}
-  <div class="page_header">Dashboard</div>
-  <div style="margin:20px;">Go to the <a href="/player/store">store</a> or play your purchased games below<div>
+     <div class="w3-bar w3-black">
+       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/player'">My Games</button>
+       <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/player/store'">Store</button>
+   </div>
+
   <table style="margin:20px;">
     <thead>
       <tr>

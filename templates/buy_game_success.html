@@ -6,9 +6,11 @@
   }
 {% endblock %}
 {% block content %}
-<div>
-You successful brought the game, purchase ID:
-    {{ data.pid }} Reference number: {{ data.ref }}
+<div class="msg">
+<p style="font-size: 25px; color:#E94209">Congratulations!</p>
+    <p> You successful brought the game. </p>
+    <p> The purchase ID: {{ data.pid }} </p>
+    <p> Reference number: {{ data.ref }}</p>
  <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/player/store'" type="button">Back to store</button>
 </div>>
 {% endblock %}

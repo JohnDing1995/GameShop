@@ -6,10 +6,15 @@
   }
 {% endblock %}
 {% block content %}
-  <div class="page_header"><a href="/player">Dashboard</a> > Games in the store</div>
+ <div class="w3-bar w3-black">
+       <button class="w3-bar-item w3-button tablink " onclick="window.location.href='/player'">My Games</button>
+       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/player/store'">Store</button>
+   </div>
+
     <div>
     {{ msg }}
     </div>
+
   <table style="margin:20px;">
     <thead>
       <tr>
