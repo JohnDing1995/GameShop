@@ -168,7 +168,8 @@ def player_buy_game(request, game_name):
     pid = str(uuid.uuid1().hex)
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
-    success_url = "http://localhost:8000/player/games/" + game_name + "/buy/success"
+    success_url = "http://localhost:8000/player/success"
+    print(success_url)
     m = md5(checksum_str.encode("ascii"))
     checksum = m.hexdigest()
     post_data = {
@@ -188,7 +189,7 @@ def player_buy_game(request, game_name):
     return render(request, "buy_game.html", post_data)
 
 #Will be log out when redirected from payment service to our website
-def player_buy_game_success(request, game_name):
+def player_buy_game_success(request):
     pid = request.GET.get('pid')
     p = Purchase.objects.get(pid=pid)
     p.result = True
