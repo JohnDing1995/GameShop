@@ -108,7 +108,7 @@ def player_main(request):
     if len(user.groups.filter(name='dev')) > 0:
         print("Not player")
         return redirect('developer_main')
-    purchase_history = Purchase.objects.filter(user=user)
+    purchase_history = Purchase.objects.filter(user=user, result=True)
     return render(request, 'player_main.html', {'purchase_history': purchase_history})
 
 @login_required(login_url='/login')
@@ -161,6 +161,9 @@ def player_buy_game(request, game_name):
         print("Not player")
         return redirect('developer_main')
     game = Game.objects.get(game_name=game_name)
+    player_own_game = Purchase.objects.filter(user=user, result=True)
+    if(len(player_own_game.filter(game=game)) > 0):
+        return render(request, 'store.html',{'msg':'you already owned '+game_name, 'games':Game.objects.all()})
     pid = str(uuid.uuid1().hex)
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
