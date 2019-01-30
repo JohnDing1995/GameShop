@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
+from django.urls import reverse
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase, Score
@@ -163,7 +164,7 @@ def player_buy_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
     player_own_game = Purchase.objects.filter(user=user, result=True)
     if(len(player_own_game.filter(game=game)) > 0):
-        return render(request, 'store.html',{'msg':'you already owned '+game_name, 'games':Game.objects.all()})
+        return render(request, "buy_game.html", {'msg':'You already owned the game '+game_name, 'owned':True})
     pid = str(uuid.uuid1().hex)
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
@@ -177,7 +178,8 @@ def player_buy_game(request, game_name):
                           "success_url": success_url,
                           "cancel_url": "http://localhost:8000/player/store",
                           "error_url": "http://localhost:8000/player/store",
-                          "checksum": checksum
+                          "checksum": checksum,
+        "owned":False
                       }
     print(post_data)
     #Add a unfinished purchase first

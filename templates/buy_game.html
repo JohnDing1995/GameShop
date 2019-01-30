@@ -7,6 +7,10 @@
 {% endblock %}
 {% block content %}
   <div class="page_header"><a href="/player">Dashboard</a> > Games in the store</div>
+    {% if owned %}
+    {{ msg }}
+
+    {% else  %}
     <form action="http://payments.webcourse.niksula.hut.fi/pay/" method="POST">
     <input type="hidden" name="pid" value={{ pid }} />
     <input type="hidden" name="sid" value={{ sid }} />
@@ -23,4 +27,5 @@
     <input type="text" id="id_amount" name="amount" value={{ amount }} />
     <input type="submit" value="Accept Payment"/>
 </form>
+    {% endif %}
 {% endblock %}
