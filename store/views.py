@@ -30,6 +30,8 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                # request.session['name'] = username
+                # request.session['pwd'] = password
                 if user.groups.filter(name='dev').exists():
                     return HttpResponseRedirect('../developer')
                 elif user.groups.filter(name='player'):
@@ -159,34 +161,39 @@ def player_buy_game(request, game_name):
         print("Not player")
         return redirect('developer_main')
     game = Game.objects.get(game_name=game_name)
-    pid = uuid.uuid1().hex
+    pid = str(uuid.uuid1().hex)
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
+    success_url = "http://localhost:8000/player/games/" + game_name + "/buy/success"
     m = md5(checksum_str.encode("ascii"))
     checksum = m.hexdigest()
-    r = requests.post('http://payments.webcourse.niksula.hut.fi/pay/',
-                      data={
-                          'pid': pid,
-                          'token': 'c12ccb024b3d72922f9b85575e76154d',
-                          'amount': amount,
-                          'sid': 'plr',
-                          'success_url': '/player/store',
-                          'cancel_url': '/player/store',
-                          'error_url': 'player/store',
-                          'checksum': checksum
-                      })
-    result = requests.codes.ok == 200
-    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=result)
+    post_data = {
+                          "pid": pid,
+                          "amount": amount,
+                          "sid": 'plr',
+                          "success_url": success_url,
+                          "cancel_url": "http://localhost:8000/player/store",
+                          "error_url": "http://localhost:8000/player/store",
+                          "checksum": checksum
+                      }
+    print(post_data)
+    #Add a unfinished purchase first
+    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=False)
     p.save()
-    if result:
-        message = 'You successfully brought game' + game_name
-        print(message)
-        game.copies_sold += game.copies_sold + 1
-        game.save()
-        return redirect('/player/store', {'msg': message})
-    else:
-        message = 'Purchase error'
-        return redirect('/player/store', {'msg': message})
+    return render(request, "buy_game.html", post_data)
+
+#Will be log out when redirected from payment service to our website
+def player_buy_game_success(request, game_name):
+    pid = request.GET.get('pid')
+    p = Purchase.objects.get(pid=pid)
+    p.result = True
+    game = p.game
+    game.copies_sold += 1
+    game.save()
+    p.save()
+    # get user object by pid and re-login
+    login(request, p.user)
+    return render(request, "buy_game_success.html", {'data':request.GET.dict()})
 
 @login_required()
 def player_save_game(request, game_name):
@@ -229,3 +236,4 @@ def developer_sales(request):
     user = request.user
     game_history = Purchase.objects.filter(game__developer=user)
     return render(request, "game_sale.html", {'sale':game_history})
+
