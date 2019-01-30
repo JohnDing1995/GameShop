@@ -6,9 +6,13 @@
   }
 {% endblock %}
 {% block content %}
-<div>
-You successful brought the game, purchase ID:
-    {{ data.pid }} Reference number: {{ data.ref }}
- <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/player/store'" type="button">Back to store</button>
-</div>>
+<div class="col-md-4 offset-md-4" style="margin-top:20px">
+    <p>You successful bought the game,<p>
+    <p><b>Purchase ID:</b><p>
+    <p>{{ data.pid }}</p>
+    <p><b>Reference number:</b></p>
+    <p>{{ data.ref }}</p>
+    <button class="btn btn-lg btn-danger btn-block" onclick="window.location.href='/player/games/{{ game_name }}'" type="button">Play the game</button>
+    <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/player/store'" type="button">Back to store</button>
+</div>
 {% endblock %}

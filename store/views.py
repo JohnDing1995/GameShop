@@ -199,7 +199,7 @@ def player_buy_game_success(request):
     p.save()
     # get user object by pid and re-login
     login(request, p.user)
-    return render(request, "buy_game_success.html", {'data':request.GET.dict()})
+    return render(request, "buy_game_success.html", {'data':request.GET.dict(), 'game_name':game.game_name})
 
 @login_required()
 def player_save_game(request, game_name):
@@ -242,4 +242,3 @@ def developer_sales(request):
     user = request.user
     game_history = Purchase.objects.filter(game__developer=user)
     return render(request, "game_sale.html", {'sale':game_history})
-
