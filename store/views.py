@@ -48,7 +48,7 @@ def player_play_game(request, game_name):
     game = Game.objects.get(game_name=game_name)
 
     scores = Score.objects.filter(game=game)
-    highscores = scores.order_by('score')[:3]
+    highscores = scores.order_by('score').reverse()[:3]
 
     return render(request,'play.html', {'game':game, 'highscores':highscores})
 
