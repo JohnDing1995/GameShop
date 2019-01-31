@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block style %}
-  iframe {
-    margin:20px;
-  }
 {% endblock %}
 {% block script %}
 <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
@@ -44,21 +41,24 @@
    </div>
 
   <div class="page_header">Game: {{ game.game_name }}</div>
-  <iframe width="800" height="600" src="{{ game.url }}"></iframe>
-  <table style="margin:20px;">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for highscore in highscores %}
+  <div class="row">
+    <iframe class="col-sm-12 col-md-6" height="600" src="{{ game.url }}"></iframe>
+    <div class="col-2 offset-md-1"><table>
+      <thead>
         <tr>
-          <td>{{ highscore.user }}</td>
-          <td>{{ highscore.score }}</td>
+          <th>Name</th>
+          <th>Score</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for highscore in highscores %}
+          <tr>
+            <td>{{ highscore.user }}</td>
+            <td>{{ highscore.score }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
 {% endblock %}
