@@ -6,29 +6,31 @@
   }
 {% endblock %}
 {% block content %}
-     <div class="w3-bar w3-black">
-       <button class="w3-bar-item w3-button tablink " onclick="window.location.href='/player'">My Games</button>
-       <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/player/store'">Store</button>
-   </div>
-    {% if owned %}
+  <div class="w3-bar w3-black">
+     <button class="w3-bar-item w3-button tablink " onclick="window.location.href='/player'">My Games</button>
+     <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/player/store'">Store</button>
+  </div>
+  {% if owned %}
     {{ msg }}
+  {% else  %}
+    <div class="col-md-4 offset-md-4" style="margin-top:20px">
+      <p><b>Buy the game</b></p>
+      <form action="http://payments.webcourse.niksula.hut.fi/pay/" method="POST">
+        <input type="hidden" name="pid" value={{ pid }} />
+        <input type="hidden" name="sid" value={{ sid }} />
+        <input type="hidden" name="success_url"
+                value={{ success_url }} />
+        <input type="hidden" name="cancel_url"
+                value={{ cancel_url }} />
+        <input type="hidden" name="error_url"
+                value={{ error_url }} />
+        <input type="hidden" name="checksum"
+                value={{ checksum }} />
 
-    {% else  %}
-    <form action="http://payments.webcourse.niksula.hut.fi/pay/" method="POST">
-    <input type="hidden" name="pid" value={{ pid }} />
-    <input type="hidden" name="sid" value={{ sid }} />
-    <input type="hidden" name="success_url"
-            value={{ success_url }} />
-    <input type="hidden" name="cancel_url"
-            value={{ cancel_url }} />
-    <input type="hidden" name="error_url"
-            value={{ error_url }} />
-    <input type="hidden" name="checksum"
-            value={{ checksum }} />
-
-    <label for="id_amount">Amount</label>
-    <input type="text" id="id_amount" name="amount" value={{ amount }} />
-    <input type="submit" value="Accept Payment"/>
-</form>
-    {% endif %}
+        <label for="id_amount">Amount</label>
+        <input type="text" readonly="true" id="id_amount" name="amount" value={{ amount }} />
+        <input type="submit" value="Accept Payment"/>
+      </form>
+    </div>
+  {% endif %}
 {% endblock %}
