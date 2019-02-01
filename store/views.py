@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.urls import reverse
+from django.utils.http import urlencode
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase, Score
@@ -100,13 +101,16 @@ def user_register(request):
 
 @login_required(login_url='/login')
 def developer_main(request):
+    msg = request.GET.get('msg')
     user = request.user
     if len(user.groups.filter(name='player')) > 0:
         return redirect('player_main')
     game_list = Game.objects.filter(developer=user)
 
     # return HttpResponse('This is test developer main' + str(request.user))
-    return render(request, 'developer_main.html', {'games': game_list})
+    if msg is None:
+        return render(request, 'developer_main.html', {'games': game_list})
+    return render(request, 'developer_main.html', {'games': game_list, 'msg':msg})
 
 
 @login_required(login_url='/login')
@@ -124,6 +128,14 @@ def logout(request):
     auth.logout(request)
     return redirect('login')
 
+@login_required(login_url='/login')
+def developer_delete_game(request, game_name):
+    user = request.user
+    Game.objects.filter(game_name=game_name, developer=user).delete()
+    base_url = reverse('developer_main')
+    query_string = urlencode({'msg':'Game deleted'})  # 2 category=42
+    url = '{}?{}'.format(base_url, query_string)
+    return redirect(url)
 
 @login_required(login_url='/login')
 def developer_create_game(request):
@@ -140,7 +152,11 @@ def developer_create_game(request):
             else:
                 g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url)
                 g.save()
-                return render(request, "create_game.html", {'form': form, 'msg': 'Game created'})
+                base_url = reverse('developer_main')
+                query_string = urlencode({'msg': 'Game created'})  # Put message in http GET parameter
+                url = '{}?{}'.format(base_url, query_string)
+                return redirect(url)
+
         else:
             return render(request, "create_game.html", {'form': form, 'msg': 'Illegal input'})
     form = CreateGameForm()
@@ -179,7 +195,6 @@ def player_buy_game(request, game_name):
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
     success_url = "http://localhost:8000/player/success"
-    print(success_url)
     m = md5(checksum_str.encode("ascii"))
     checksum = m.hexdigest()
     post_data = {
@@ -202,7 +217,12 @@ def player_buy_game(request, game_name):
 # Will be log out when redirected from payment service to our website
 def player_buy_game_success(request):
     pid = request.GET.get('pid')
-    p = Purchase.objects.get(pid=pid)
+    checksum = request.GET.get('checksum')
+    login(request, Purchase.objects.get(pid=pid).user)
+    try:
+        p = Purchase.objects.get(pid=pid, checksum=checksum)
+    except ObjectDoesNotExist:
+        return render(request, "buy_game_success.html", {'data': request.GET.dict(), 'game_name': 'Checksum verification error!', 'success':'failed to'})
     p.result = True
     game = p.game
     game.copies_sold += 1
@@ -211,7 +231,7 @@ def player_buy_game_success(request):
     # get user object by pid and re-login
     login(request, p.user)
 
-    return render(request, "buy_game_success.html", {'data':request.GET.dict(), 'game_name':game.game_name})
+    return render(request, "buy_game_success.html", {'data':request.GET.dict(), 'game_name':game.game_name, 'success':'successfully'})
 
 
 @login_required()

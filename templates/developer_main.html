@@ -10,7 +10,7 @@
        <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/developer'">Dashboard</button>
        <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/developer/games'">Statistics</button>
    </div>
-
+<div>{{ msg }}</div>
     <div class = "upload_container"><a href="/developer/create_game" class = "upload">UPLOAD A NEW GAME</a></div>
       <table style="margin:20px;">
         <thead>
@@ -30,6 +30,5 @@
           {% endfor %}
         </tbody>
       </table>
-
 
 {% endblock %}

@@ -8,10 +8,12 @@
 {% block content %}
   <div class="col-md-4 offset-md-4 msg">
     <p style="font-size: 25px; color:#E94209">Congratulations!</p>
-    <p> You successful bought the game. </p>
+    <p> You {{ success }} bought the game. </p>
     <p> The purchase ID: {{ data.pid }} </p>
     <p> Reference number: {{ data.ref }}</p>
+            {% if success is 'successful' %}
     <button class="btn btn-lg btn-danger btn-block" onclick="window.location.href='/player/games/{{ game_name }}'" type="button">Play the game</button>
+{% endif %}
     <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/player/store'" type="button">Back to store</button>
   </div>
 {% endblock %}
