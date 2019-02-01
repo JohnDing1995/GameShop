@@ -15,6 +15,7 @@ class Game(models.Model):
     copies_sold = models.IntegerField()
     price = models.FloatField()
     url = models.URLField(default='http://webcourse.cs.hut.fi/example_game.html')
+    category = models.CharField(default='No category', max_length=256)
 
 
 class Purchase(models.Model):
