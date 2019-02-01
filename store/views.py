@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 
+
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
@@ -18,7 +19,7 @@ from django.utils.http import urlencode
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase, Score
-from store.utilities import pay
+from store.utilities import pay, developer_required, player_required
 
 ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
 
@@ -69,7 +70,7 @@ def player_play_game(request, game_name):
 
     return render(request, 'play.html', {'game': game, 'highscores': highscores})
 
-
+@developer_required
 def developer_modify_game(request, game_name):
     base_url = reverse('developer_main')
     try:
@@ -120,13 +121,13 @@ def user_register(request):
     form = RegisterForm()
     return render(request, 'register.html', {'form': form, 'error': ''})
 
-
+@developer_required
 @login_required(login_url='/login')
 def developer_main(request):
     msg = request.GET.get('msg')
     user = request.user
-    if len(user.groups.filter(name='player')) > 0:
-        return redirect('player_main')
+    # if len(user.groups.filter(name='player')) > 0:
+    #     return redirect('player_main')
     game_list = Game.objects.filter(developer=user)
 
     # return HttpResponse('This is test developer main' + str(request.user))
@@ -134,8 +135,8 @@ def developer_main(request):
         return render(request, 'developer_main.html', {'games': game_list})
     return render(request, 'developer_main.html', {'games': game_list, 'msg': msg})
 
-
 @login_required(login_url='/login')
+@player_required
 def player_main(request):
     user = request.user
     if len(user.groups.filter(name='dev')) > 0:
@@ -151,7 +152,7 @@ def logout(request):
     auth.logout(request)
     return redirect('login')
 
-
+@developer_required
 @login_required(login_url='/login')
 def developer_delete_game(request, game_name):
     base_url = reverse('developer_main')
@@ -174,7 +175,7 @@ def developer_delete_game(request, game_name):
     url = '{}?{}'.format(base_url, query_string)
     return redirect(url)
 
-
+@developer_required
 @login_required(login_url='/login')
 def developer_create_game(request):
     user = request.user
@@ -201,7 +202,7 @@ def developer_create_game(request):
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
 
-
+@developer_required
 @login_required(login_url='/login')
 def developer_game_buyer(request, game_name):
     # list all purchase history of a game
@@ -221,6 +222,7 @@ def store(request):
 
 
 @login_required(login_url='/login')
+@player_required
 def player_buy_game(request, game_name):
     user = request.user
     if len(user.groups.filter(name='dev')) > 0:
@@ -276,6 +278,7 @@ def player_buy_game_success(request):
 
 
 @login_required()
+@player_required
 def player_save_game(request, game_name):
     user = request.user
     if request.method == 'POST':
@@ -287,11 +290,13 @@ def player_save_game(request, game_name):
 
 
 @login_required()
+@player_required
 def player_load_game(request, game_name):
     user = request.user
 
 
 @login_required()
+@player_required
 def player_submit_score(request, game_name):
     user = request.user
     if request.method == 'POST':
@@ -309,7 +314,7 @@ def player_submit_score(request, game_name):
 
     return JsonResponse({'message': 'Score submitted'})
 
-
+@developer_required
 @login_required(login_url='/login')
 def developer_sales(request):
     # list all purchase history of a game
