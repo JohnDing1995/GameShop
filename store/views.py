@@ -146,6 +146,7 @@ def developer_create_game(request):
             game_name = form.cleaned_data['game_name']
             price = form.cleaned_data['game_price']
             url = form.cleaned_data['game_url']
+            category = form.cleaned_data['game_category']
             if len(Game.objects.filter(game_name=game_name)) > 0:
                 print('Game already exists')
                 return render(request, "create_game.html", {'form': form, 'msg': 'Game already exists'})
@@ -276,4 +277,3 @@ def developer_sales(request):
     game_history = Purchase.objects.filter(game__developer=user)
 
     return render(request, "game_sale.html", {'sale':game_history})
-
