@@ -14,7 +14,7 @@ class RegisterForm(forms.Form):
         label="I'm a",
         choices=ROLE_CHOICES
     )
-    
+
 class LoginForm(forms.Form):
 
     username = forms.CharField(label="Username", max_length=128,
@@ -29,3 +29,11 @@ class CreateGameForm(forms.Form):
                                widget=forms.NumberInput(attrs={'class': 'form-control'}))
     game_url = forms.URLField(label="Game URL",
                                widget=forms.URLInput(attrs={'class': 'form-control'}))
+    game_category = forms.ChoiceField(label="Game Category",
+                              widget=forms.Select(attrs={'class': 'form-control'}), choices=(('No category', 'No category'),
+                                                                                                ('Action', 'Action'),
+                                                                                                ('Adventure', 'Adventure'),
+                                                                                                ('Arcade', 'Arcade'),
+                                                                                                ('Music', 'Music'),
+                                                                                                ('Platform', 'Platform'),
+                                                                                                ('Racing', 'Racing')))
