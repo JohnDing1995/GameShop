@@ -10,7 +10,9 @@
        <button class="w3-bar-item w3-button tablink w3-red" onclick="window.location.href='/player'">My Games</button>
        <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/player/store'">Store</button>
    </div>
-
+    {% if msg != None %}
+<div class="text-danger">{{ msg }}</div>
+    {% endif %}
   <table style="margin:20px;">
     <thead>
       <tr>

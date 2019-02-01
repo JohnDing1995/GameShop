@@ -47,20 +47,42 @@ def user_login(request):
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
-
+@login_required(login_url='/login')
 def player_play_game(request, game_name):
-    game = Game.objects.get(game_name=game_name)
+    base_url = reverse('player_main')
+    try:
+        game = Game.objects.get(game_name=game_name)
+        try:
+            p = Purchase.objects.get(game=game, user=request.user, result=True)
+            scores = Score.objects.filter(game=game)
+            highscores = scores.order_by('score').reverse()[:3]
+        except ObjectDoesNotExist:
+            query_string = urlencode({'msg': 'The game doesn\'t belongs to you'})  # 2 category=42
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+    except ObjectDoesNotExist:
+        query_string = urlencode({'msg': 'The game doesn\'t exists'})  # 2 category=42
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
 
-    scores = Score.objects.filter(game=game)
-    highscores = scores.order_by('score').reverse()[:3]
+
 
     return render(request, 'play.html', {'game': game, 'highscores': highscores})
 
 
 def developer_modify_game(request, game_name):
-    game = Game.objects.get(game_name=game_name)
+    base_url = reverse('developer_main')
+    try:
+        game = Game.objects.get(game_name=game_name)
+    except ObjectDoesNotExist:
+        query_string = urlencode({'msg': 'This game doesn\'t exists'})
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
     if game.developer != request.user:
-        return redirect('/login', {'msg': 'You don\' t have the access to this game'})
+
+        query_string = urlencode({'msg': 'You don\'t have access to this game'})
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
     if request.method == 'POST':
         form = CreateGameForm(request.POST)
         if form.is_valid():
@@ -110,7 +132,7 @@ def developer_main(request):
     # return HttpResponse('This is test developer main' + str(request.user))
     if msg is None:
         return render(request, 'developer_main.html', {'games': game_list})
-    return render(request, 'developer_main.html', {'games': game_list, 'msg':msg})
+    return render(request, 'developer_main.html', {'games': game_list, 'msg': msg})
 
 
 @login_required(login_url='/login')
@@ -119,8 +141,9 @@ def player_main(request):
     if len(user.groups.filter(name='dev')) > 0:
         print("Not player")
         return redirect('developer_main')
+    msg = request.GET.get('msg')
     purchase_history = Purchase.objects.filter(user=user, result=True)
-    return render(request, 'player_main.html', {'purchase_history': purchase_history})
+    return render(request, 'player_main.html', {'purchase_history': purchase_history, 'msg':msg})
 
 
 @login_required(login_url='/login')
@@ -128,14 +151,29 @@ def logout(request):
     auth.logout(request)
     return redirect('login')
 
+
 @login_required(login_url='/login')
 def developer_delete_game(request, game_name):
-    user = request.user
-    Game.objects.filter(game_name=game_name, developer=user).delete()
     base_url = reverse('developer_main')
-    query_string = urlencode({'msg':'Game deleted'})  # 2 category=42
+    user = request.user
+    try:
+        game = Game.objects.get(game_name=game_name)
+    except ObjectDoesNotExist:
+        query_string = urlencode({'msg': 'This game doesn\'t exists'})
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
+    games = Game.objects.filter(game_name=game_name, developer=user)
+    if len(games) is 0:
+        base_url = reverse('developer_main')
+        query_string = urlencode({'msg': 'You don\'t have permission to delete this game'})
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
+    games.delete()
+    base_url = reverse('developer_main')
+    query_string = urlencode({'msg': 'Game deleted'})  # 2 category=42
     url = '{}?{}'.format(base_url, query_string)
     return redirect(url)
+
 
 @login_required(login_url='/login')
 def developer_create_game(request):
@@ -222,7 +260,8 @@ def player_buy_game_success(request):
     try:
         p = Purchase.objects.get(pid=pid, checksum=checksum)
     except ObjectDoesNotExist:
-        return render(request, "buy_game_success.html", {'data': request.GET.dict(), 'game_name': 'Checksum verification error!', 'success':'failed to'})
+        return render(request, "buy_game_success.html",
+                      {'data': request.GET.dict(), 'game_name': 'Checksum verification error!', 'success': 'failed to'})
     p.result = True
     game = p.game
     game.copies_sold += 1
@@ -231,7 +270,8 @@ def player_buy_game_success(request):
     # get user object by pid and re-login
     login(request, p.user)
 
-    return render(request, "buy_game_success.html", {'data':request.GET.dict(), 'game_name':game.game_name, 'success':'successfully'})
+    return render(request, "buy_game_success.html",
+                  {'data': request.GET.dict(), 'game_name': game.game_name, 'success': 'successfully'})
 
 
 @login_required()
@@ -275,5 +315,4 @@ def developer_sales(request):
     user = request.user
     game_history = Purchase.objects.filter(game__developer=user)
 
-    return render(request, "game_sale.html", {'sale':game_history})
-
+    return render(request, "game_sale.html", {'sale': game_history})
