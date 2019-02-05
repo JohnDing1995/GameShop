@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block style %}
+  th,td {
+    padding:20px;
+  }
+{% endblock %}
+{% block content %}
+    {% if succeed is True %}
+  <div class="col-md-4 offset-md-4 msg">
+    <p style="font-size: 25px; color:#E94209">Congratulations!</p>
+    <p> {{ msg }}. </p>
+    <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/player'" type="button">To main page</button>
+  {% else %}
+          <div class="col-md-4 offset-md-4 msg">
+    <p style="font-size: 25px; color:#E94209">Sorry!</p>
+    <p> {{ msg }}. </p>
+    <button class="btn btn-lg btn-secondary btn-block" onclick="window.location.href='/register'" type="button">To register page</button>
+          </div>
+  {% endif %}
+
+{% endblock %}

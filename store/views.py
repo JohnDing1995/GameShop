@@ -1,28 +1,42 @@
+import base64
 import uuid
 from hashlib import md5
 import requests
 import json
 
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail, EmailMessage
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-
 
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
+from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.http import urlencode
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlencode, urlsafe_base64_encode, urlsafe_base64_decode
 
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase, Score
-from store.utilities import pay, developer_required, player_required
+from store.decorators import developer_required, player_required
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils import six
 
 ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
 
+
+class TokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return (
+            six.text_type(user.pk) + six.text_type(timestamp) +
+            six.text_type(user.is_active)
+        )
+account_activation_token = TokenGenerator()
 
 def user_login(request):
     if request.method == 'POST':
@@ -33,8 +47,6 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # request.session['name'] = username
-                # request.session['pwd'] = password
                 if user.groups.filter(name='dev').exists():
                     return HttpResponseRedirect('../developer')
                 elif user.groups.filter(name='player'):
@@ -110,8 +122,23 @@ def user_register(request):
             group = Group.objects.get(name=group_name)
             try:
                 user = User.objects.create_user(username, email, password)
+                user.is_active = False
+                user.save()
                 group.user_set.add(user)
-                return HttpResponseRedirect('../login')
+                current_site = get_current_site(request)
+                mail_subject = 'Activate your blog account.'
+                message = render_to_string('active_email.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': str(user.pk),
+                    'token': account_activation_token.make_token(user),
+                })
+                to_email = form.cleaned_data.get('email')
+                email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+                )
+                email.send()
+                return render(request, 'register.html', {'form': form, 'error': 'You should have received the confirmation link to your email'})
             except IntegrityError:
                 return render(request, 'register.html', {'form': form, 'error': 'Username already exists'})
 
@@ -322,3 +349,21 @@ def developer_sales(request):
     game_history = Purchase.objects.filter(game__developer=user)
 
     return render(request, "game_sale.html", {'sale':game_history})
+
+
+def user_confirmation(request, uuid, token):
+    try:
+        uid = uuid
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return render(request, "confirm_clicked.html", {'succeed': True,
+                                                        'msg':'Thank you for your email confirmation. Now you can login your account.'})
+    else:
+        return render(request, "confirm_clicked.html", {'succeed': False,
+                                                        'msg': 'Activation link is invalid! Please recheck your email'})

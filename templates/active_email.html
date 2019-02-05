@@ -1,0 +1,5 @@
+{% autoescape off %}
+    Hi {{ user.username }}!
+        Nice to meet you! Please confirm your account by click the link below:
+        http://{{ domain }}{% url 'activate' uuid=uid token=token %}
+{% endautoescape %}
