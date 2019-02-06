@@ -7,8 +7,13 @@
 {% endblock %}
 {% block content %}
   <div class="col-md-4 offset-md-4 msg">
+  {% if success == 'successfully' %}
     <p style="font-size: 25px; color:#E94209">Congratulations!</p>
+  {% else %}
+  <p style="font-size: 25px; color:#E94209">Oops!</p>
+  {% endif %}
     <p> You {{ success }} bought the game. </p>
+      <p>{{ game_name }}</p>
     <p> The purchase ID: {{ data.pid }} </p>
     <p> Reference number: {{ data.ref }}</p>
             {% if success is 'successful' %}

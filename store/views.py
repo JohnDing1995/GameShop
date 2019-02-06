@@ -252,9 +252,6 @@ def store(request):
 @player_required
 def player_buy_game(request, game_name):
     user = request.user
-    if len(user.groups.filter(name='dev')) > 0:
-        print("Not player")
-        return redirect('developer_main')
     game = Game.objects.get(game_name=game_name)
     player_own_game = Purchase.objects.filter(user=user, result=True)
     if (len(player_own_game.filter(game=game)) > 0):
@@ -265,8 +262,8 @@ def player_buy_game(request, game_name):
 
     m = md5(checksum_str.encode("ascii"))
     current_site = get_current_site(request)
-    print(current_site.domain)
     checksum = m.hexdigest()
+    print(checksum)
     post_data = {
         "pid": pid,
         "amount": amount,
@@ -287,13 +284,26 @@ def player_buy_game(request, game_name):
 # Will be log out when redirected from payment service to our website
 def player_buy_game_success(request):
     pid = request.GET.get('pid')
-    checksum = request.GET.get('checksum')
+    ref = request.GET.get('ref')
+    result = request.GET.get('result')
+    checksum_str = "pid={}&ref={}&result={}&token={}".format(pid, ref, result, "c12ccb024b3d72922f9b85575e76154d")
+    m = md5(checksum_str.encode("ascii"))
+    checksum = m.hexdigest()
     login(request, Purchase.objects.get(pid=pid).user)
     try:
-        p = Purchase.objects.get(pid=pid, checksum=checksum)
+        #p = Purchase.objects.get(pid=pid, checksum=checksum)
+        p = Purchase.objects.get(pid=pid)
+        if str(checksum) != str(request.GET.get('checksum')):
+            print(str(checksum))
+            print(str(request.GET.get('checksum')))
+            return render(request, "buy_game_success.html",
+                          {'data': request.GET.dict(), 'game_name': 'Invalid Checksum', 'success': 'failed to'})
     except ObjectDoesNotExist:
+        print("error!")
         return render(request, "buy_game_success.html",
-                      {'data': request.GET.dict(), 'game_name': 'Checksum verification error!', 'success': 'failed to'})
+                      {'data': request.GET.dict(), 'game_name': 'Game not found', 'success': 'failed to'})
+    print(p.game)
+    print("purchased!")
     p.result = True
     game = p.game
     game.copies_sold += 1
