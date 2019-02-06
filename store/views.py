@@ -27,7 +27,7 @@ from store.decorators import developer_required, player_required
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import six
 
-ERROR_MSG = "{messageType: \"ERROR\",info: \"Gamestate could not be loaded\"};"
+ERROR_MSG = "{messageType: \"ERROR\",info: \"Game state could not be loaded\"};"
 
 
 class TokenGenerator(PasswordResetTokenGenerator):
@@ -68,7 +68,7 @@ def player_play_game(request, game_name):
         try:
             p = Purchase.objects.get(game=game, user=request.user, result=True)
             scores = Score.objects.filter(game=game)
-            highscores = scores.order_by('score').reverse()[:3]
+            high_scores = scores.order_by('score').reverse()[:3]
         except ObjectDoesNotExist:
             query_string = urlencode({'msg': 'The game doesn\'t belongs to you'})  # 2 category=42
             url = '{}?{}'.format(base_url, query_string)
@@ -80,7 +80,7 @@ def player_play_game(request, game_name):
 
 
 
-    return render(request, 'play.html', {'game': game, 'highscores': highscores})
+    return render(request, 'play.html', {'game': game, 'highscores': high_scores})
 
 @developer_required
 def developer_modify_game(request, game_name):
@@ -262,16 +262,18 @@ def player_buy_game(request, game_name):
     pid = str(uuid.uuid1().hex)
     amount = game.price
     checksum_str = "pid={}&sid={}&amount={}&token={}".format(pid, "plr", amount, "c12ccb024b3d72922f9b85575e76154d")
-    success_url = "http://localhost:8000/player/success"
+
     m = md5(checksum_str.encode("ascii"))
+    current_site = get_current_site(request)
+    print(current_site.domain)
     checksum = m.hexdigest()
     post_data = {
         "pid": pid,
         "amount": amount,
         "sid": 'plr',
-        "success_url": success_url,
-        "cancel_url": "http://localhost:8000/player/store",
-        "error_url": "http://localhost:8000/player/store",
+        "success_url": "http://" + current_site.domain + "/player/success",
+        "cancel_url": "http://" + current_site.domain + "/player/store",
+        "error_url": "http://" + current_site.domain + "/player/store",
         "checksum": checksum,
         "owned": False
     }
