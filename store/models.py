@@ -16,6 +16,13 @@ class Game(models.Model):
     price = models.FloatField()
     url = models.URLField(default='http://webcourse.cs.hut.fi/example_game.html')
     category = models.CharField(default='No category', max_length=256)
+    CATEGORY_CHOICES=(('No category', 'No category'),
+                      ('Action', 'Action'),
+                      ('Adventure', 'Adventure'),
+                      ('Arcade', 'Arcade'),
+                      ('Music', 'Music'),
+                      ('Platform', 'Platform'),
+                      ('Racing', 'Racing'))
 
 
 class Purchase(models.Model):
