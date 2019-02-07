@@ -16,19 +16,20 @@
     </div>
 
   <table style="margin:20px;">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Price</th>
-      </tr>
-    </thead>
     <tbody>
-      {% for game in games %}
+      {% for category in categories %}
         <tr>
-          <td>{{ game.game_name }}</td>
-          <td>€{{ game.price }}</td>
-          <td><a href="games/{{ game.game_name }}/buy" target="view_window">Buy</a></td>
+          <td><b>{{ category }}<b></td>
         </tr>
+        {% for game in games %}
+          {% if game.category == category %}
+          <tr>
+            <td>{{ game.game_name }}</td>
+            <td>€{{ game.price }}</td>
+            <td><a href="games/{{ game.game_name }}/buy" target="view_window">Buy</a></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
       {% endfor %}
     </tbody>
   </table>
