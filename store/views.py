@@ -89,12 +89,13 @@ def developer_modify_game(request, game_name):
             game.game_name = form.cleaned_data['game_name']
             game.price = form.cleaned_data['game_price']
             game.url = form.cleaned_data['game_url']
+            game.category = form.cleaned_data['game_category']
             game.save()
             return render(request, 'create_game.html', {'form': form, 'msg': 'Game successfully updated'})
         else:
             return render(request, 'create_game.html', {'form': form, 'msg': 'Form error'})
 
-    form = CreateGameForm(initial={'game_url': game.url, 'game_name': game.game_name, 'game_price': game.price})
+    form = CreateGameForm(initial={'game_url': game.url, 'game_name': game.game_name, 'game_price': game.price, 'game_category': game.category})
     return render(request, 'create_game.html', {'form': form})
 
 
@@ -189,7 +190,7 @@ def developer_create_game(request):
                 print('Game already exists')
                 return render(request, "create_game.html", {'form': form, 'msg': 'Game already exists'})
             else:
-                g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url)
+                g = Game(game_name=game_name, price=price, developer=user, copies_sold=0, url=url, category=category)
                 g.save()
                 base_url = reverse('developer_main')
                 query_string = urlencode({'msg': 'Game created'})  # Put message in http GET parameter
@@ -217,7 +218,8 @@ def store(request):
         print("Not player")
         return redirect('developer_main')
     all_games = Game.objects.all()
-    return render(request, "store.html", {'games': all_games})
+    categories = [y for (x,y) in Game.CATEGORY_CHOICES]
+    return render(request, "store.html", {'categories': categories, 'games': all_games})
 
 
 @login_required(login_url='/login')

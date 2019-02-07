@@ -1,4 +1,5 @@
 from django import forms
+from store.models import Game
 
 ROLE_CHOICES = (
     ('player', 'Player'),
@@ -30,10 +31,4 @@ class CreateGameForm(forms.Form):
     game_url = forms.URLField(label="Game URL",
                                widget=forms.URLInput(attrs={'class': 'form-control'}))
     game_category = forms.ChoiceField(label="Game Category",
-                              widget=forms.Select(attrs={'class': 'form-control'}), choices=(('No category', 'No category'),
-                                                                                                ('Action', 'Action'),
-                                                                                                ('Adventure', 'Adventure'),
-                                                                                                ('Arcade', 'Arcade'),
-                                                                                                ('Music', 'Music'),
-                                                                                                ('Platform', 'Platform'),
-                                                                                                ('Racing', 'Racing')))
+                              widget=forms.Select(attrs={'class': 'form-control'}), choices=Game.CATEGORY_CHOICES)
