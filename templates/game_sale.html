@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load tz %}
 {% load staticfiles %}
 {% block style %}
     th,td {
@@ -23,7 +24,7 @@
               {% for each in sale %}
                 <tr>
                   <td>{{ each.game.game_name }}</td>
-                                  <td>{{ each.time.astimezone |date:'d-m-y H:i:s'}}</td>
+                                  <td>{{ each.time|localtime}}</td>
                                   <td>{{ each.game.price }}</td>
                 </tr>
               {% endfor %}

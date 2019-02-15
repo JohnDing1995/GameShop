@@ -6,6 +6,8 @@
 <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
 {% csrf_token %}
 <script>
+
+
   window.addEventListener("message", receiveGameMessage);
   var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
   function csrfSafeMethod(method) {
@@ -19,6 +21,7 @@
       }
   });
   function receiveGameMessage(event) {
+      iFrame = document.getElementById('game');
     console.log(event.data);
     if (event.data.messageType === "SCORE") {
       $.ajax({
@@ -30,6 +33,15 @@
           console.log("Score submitted");
         }
       });
+    } else if(event.data.messageType === "LOAD_REQUEST"){
+        var message =  {
+            messageType: "ERROR",
+            info: "Game state could not be loaded"
+            };
+        iFrame.contentWindow.postMessage(
+                    message,
+                    "*"
+                );
     }
   }
 </script>
@@ -42,7 +54,7 @@
 
   <div class="page_header">Game: {{ game.game_name }}</div>
   <div class="row">
-    <iframe class="col-sm-12 col-md-6" height="600" src="{{ game.url }}"></iframe>
+    <iframe class="col-sm-12 col-md-6" id="game" height="600" src="{{ game.url }}"></iframe>
     <div class="col-2 offset-md-1"><table>
       <thead>
         <tr>

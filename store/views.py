@@ -1,4 +1,5 @@
 import base64
+import datetime
 import uuid
 from hashlib import md5
 import requests
@@ -278,7 +279,7 @@ def player_buy_game(request, game_name):
     }
     print(post_data)
     # Add a unfinished purchase first
-    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=False)
+    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum,result=False)
     p.save()
     return render(request, "buy_game.html", post_data)
 

@@ -1,4 +1,9 @@
+from datetime import timezone
+
+import pytz
 from django.db import models
+from django.template.backends import django
+from tzlocal import get_localzone
 
 # Create your models here.
 from django.utils.datetime_safe import datetime
@@ -40,7 +45,7 @@ class Purchase(models.Model):
     result = models.BooleanField()
     checksum = models.TextField()
     amount = models.FloatField(default=0.0)
-    time = models.DateTimeField(default=datetime.now, blank=True)
+    time = models.DateTimeField(auto_now_add=True, blank=True)
     game_state = models.CharField(max_length=255, default="")
 
 class Score(models.Model):
@@ -55,7 +60,7 @@ class Score(models.Model):
         on_delete=models.CASCADE
     )
     score = models.FloatField()
-    time = models.DateTimeField(default=datetime.now, blank=True)
+    time = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
         unique_together = ("user", "game")
