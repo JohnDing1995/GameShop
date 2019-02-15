@@ -1,10 +1,4 @@
-from datetime import timezone
-
-import pytz
 from django.db import models
-from django.template.backends import django
-from tzlocal import get_localzone
-
 # Create your models here.
 from django.utils.datetime_safe import datetime
 
