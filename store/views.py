@@ -1,32 +1,29 @@
-import base64
-import datetime
 import uuid
 from hashlib import md5
-import requests
 import json
+import uuid
+from hashlib import md5
 
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail, EmailMessage
 from django.contrib import auth
 from django.contrib.auth import authenticate
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
+from django.db import IntegrityError
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlencode, urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils import six
+from django.utils.http import urlencode
 
+from store.decorators import developer_required, player_required
 from store.forms import LoginForm, RegisterForm, CreateGameForm
 from store.models import Game, Purchase, Score
-from store.decorators import developer_required, player_required
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils import six
 
 ERROR_MSG = "{messageType: \"ERROR\",info: \"Game state could not be loaded\"};"
 
@@ -34,10 +31,13 @@ ERROR_MSG = "{messageType: \"ERROR\",info: \"Game state could not be loaded\"};"
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (
-            six.text_type(user.pk) + six.text_type(timestamp) +
-            six.text_type(user.is_active)
+                six.text_type(user.pk) + six.text_type(timestamp) +
+                six.text_type(user.is_active)
         )
+
+
 account_activation_token = TokenGenerator()
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -61,6 +61,7 @@ def user_login(request):
     form = LoginForm()
     return render(request, 'login.html', {'form': form, 'can_not_login': False})
 
+
 @login_required(login_url='/login')
 def player_play_game(request, game_name):
     base_url = reverse('player_main')
@@ -79,9 +80,8 @@ def player_play_game(request, game_name):
         url = '{}?{}'.format(base_url, query_string)
         return redirect(url)
 
-
-
     return render(request, 'play.html', {'game': game, 'highscores': high_scores})
+
 
 @developer_required
 def developer_modify_game(request, game_name):
@@ -93,7 +93,6 @@ def developer_modify_game(request, game_name):
         url = '{}?{}'.format(base_url, query_string)
         return redirect(url)
     if game.developer != request.user:
-
         query_string = urlencode({'msg': 'You don\'t have access to this game'})
         url = '{}?{}'.format(base_url, query_string)
         return redirect(url)
@@ -109,7 +108,8 @@ def developer_modify_game(request, game_name):
         else:
             return render(request, 'create_game.html', {'form': form, 'msg': 'Form error'})
 
-    form = CreateGameForm(initial={'game_url': game.url, 'game_name': game.game_name, 'game_price': game.price, 'game_category': game.category})
+    form = CreateGameForm(initial={'game_url': game.url, 'game_name': game.game_name, 'game_price': game.price,
+                                   'game_category': game.category})
     return render(request, 'create_game.html', {'form': form})
 
 
@@ -140,7 +140,8 @@ def user_register(request):
                     mail_subject, message, to=[to_email]
                 )
                 email.send()
-                return render(request, 'register.html', {'form': form, 'error': 'You should have received the confirmation link to your email'})
+                return render(request, 'register.html',
+                              {'form': form, 'error': 'You should have received the confirmation link to your email'})
             except IntegrityError:
                 return render(request, 'register.html', {'form': form, 'error': 'Username already exists'})
 
@@ -149,6 +150,7 @@ def user_register(request):
                           {'form': form, 'error': 'Please check your username and password if they meet requirements.'})
     form = RegisterForm()
     return render(request, 'register.html', {'form': form, 'error': ''})
+
 
 @developer_required
 @login_required(login_url='/login')
@@ -164,6 +166,7 @@ def developer_main(request):
         return render(request, 'developer_main.html', {'games': game_list})
     return render(request, 'developer_main.html', {'games': game_list, 'msg': msg})
 
+
 @login_required(login_url='/login')
 @player_required
 def player_main(request):
@@ -173,13 +176,14 @@ def player_main(request):
         return redirect('developer_main')
     msg = request.GET.get('msg')
     purchase_history = Purchase.objects.filter(user=user, result=True)
-    return render(request, 'player_main.html', {'purchase_history': purchase_history, 'msg':msg})
+    return render(request, 'player_main.html', {'purchase_history': purchase_history, 'msg': msg})
 
 
 @login_required(login_url='/login')
 def logout(request):
     auth.logout(request)
     return redirect('login')
+
 
 @developer_required
 @login_required(login_url='/login')
@@ -203,6 +207,7 @@ def developer_delete_game(request, game_name):
     query_string = urlencode({'msg': 'Game deleted'})  # 2 category=42
     url = '{}?{}'.format(base_url, query_string)
     return redirect(url)
+
 
 @developer_required
 @login_required(login_url='/login')
@@ -231,6 +236,7 @@ def developer_create_game(request):
     form = CreateGameForm()
     return render(request, "create_game.html", {'form': form})
 
+
 @developer_required
 @login_required(login_url='/login')
 def developer_game_buyer(request, game_name):
@@ -247,7 +253,7 @@ def store(request):
         print("Not player")
         return redirect('developer_main')
     all_games = Game.objects.all()
-    categories = [y for (x,y) in Game.CATEGORY_CHOICES]
+    categories = [y for (x, y) in Game.CATEGORY_CHOICES]
     return render(request, "store.html", {'categories': categories, 'games': all_games})
 
 
@@ -279,7 +285,7 @@ def player_buy_game(request, game_name):
     }
     print(post_data)
     # Add a unfinished purchase first
-    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum,result=False)
+    p = Purchase(game=game, user=user, pid=pid, amount=amount, checksum=checksum, result=False)
     p.save()
     return render(request, "buy_game.html", post_data)
 
@@ -294,7 +300,7 @@ def player_buy_game_success(request):
     checksum = m.hexdigest()
     login(request, Purchase.objects.get(pid=pid).user)
     try:
-        #p = Purchase.objects.get(pid=pid, checksum=checksum)
+        # p = Purchase.objects.get(pid=pid, checksum=checksum)
         p = Purchase.objects.get(pid=pid)
         if str(checksum) != str(request.GET.get('checksum')):
             print(str(checksum))
@@ -356,6 +362,7 @@ def player_submit_score(request, game_name):
 
     return JsonResponse({'message': 'Score submitted'})
 
+
 @developer_required
 @login_required(login_url='/login')
 def developer_sales(request):
@@ -363,7 +370,7 @@ def developer_sales(request):
     user = request.user
     game_history = Purchase.objects.filter(game__developer=user)
 
-    return render(request, "game_sale.html", {'sale':game_history})
+    return render(request, "game_sale.html", {'sale': game_history})
 
 
 def user_confirmation(request, uuid, token):
@@ -378,7 +385,7 @@ def user_confirmation(request, uuid, token):
         login(request, user)
         # return redirect('home')
         return render(request, "confirm_clicked.html", {'succeed': True,
-                                                        'msg':'Thank you for your email confirmation. Now you can login your account.'})
+                                                        'msg': 'Thank you for your email confirmation. Now you can login your account.'})
     else:
         return render(request, "confirm_clicked.html", {'succeed': False,
                                                         'msg': 'Activation link is invalid! Please recheck your email'})
